@@ -1,0 +1,40 @@
+[{
+  "cas": {
+    "SCDS": [
+      "CS",
+      "CIS",
+      "DSCI",
+      "MACS"
+    ],
+    "NatSci": [
+      "PSY",
+      "PHYS",
+      "MSCI",
+      "MATH",
+      "BI",
+      "NEUR",
+      "MARB",
+      "ESCI"
+    ],
+    "SocSci": [
+      "PS",
+      "EC",
+      "SDSC",
+      "LING"
+    ],
+    "Hum": [
+      "JPN",
+      "ENG"
+    ]
+  },
+  "Business": [
+    "BADM",
+    "ACTG",
+    "PBA"
+  ],
+  "Design": [
+    "ATCH",
+    "ATCF",
+    "ARH"
+  ]
+}]

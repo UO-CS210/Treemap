@@ -1,7 +1,13 @@
 """Unit tests for splitter.py"""
 
 import unittest
+import time  # To distinguish linear-time from quadratic time solutions
 from splitter import bisect
+
+import logging
+logging.basicConfig()
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
 
 def show_pivot(i: int, li: list[int]) -> str:
     """String showing i"""
@@ -50,6 +56,27 @@ class Tests(unittest.TestCase):
         li = [6, 5, 4, 3, 2, 1]  # total 21, target is 10, so [6,5] and [4,3,2,1]
         parts = bisect(li)
         self.assertEqual(parts,  ([6, 5], [4, 3, 2, 1]))
+
+    def test_fast_enough(self):
+        """Note: 50_000 entries is chosen empirically to be enough to
+        take about 20 to 30 seconds on a 2020 M1 macbook pro
+        using the quadratic algorithm, but around .01 seconds with the
+        linear time algorithm.
+        It will be annoying to students with slow computers, but
+        I want to be sure this test can distinguish between linear time and quadratic
+        time even on a fast "gaming" desktop computer for at least a few years.
+        """
+        a_lot = 50_000
+        li = [1] * a_lot   # A lot of 1s
+        li.append(a_lot)   # Make it split off just the last element
+        begin_time = time.time()
+        parts = bisect(li)
+        end_time = time.time()
+        elapsed = end_time - begin_time
+        log.debug(f"Splitting {a_lot+1} items in {elapsed} seconds")
+        # A linear time solution should finish in less than a second
+        self.assertLess(elapsed, 1.0)
+
 
 if __name__ == "__main__":
     unittest.main()

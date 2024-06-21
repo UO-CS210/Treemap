@@ -144,6 +144,7 @@ def wait_close():
         SVG_BUFFER.append("</svg>")
         SVG_OUT.write("".join(SVG_BUFFER))
         SVG_OUT.close()
-    input("Press enter to close window")
+    print("Click window to close it")
+    CANVAS.getMouse()
     CANVAS.close()
 
