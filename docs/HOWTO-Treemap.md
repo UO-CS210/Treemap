@@ -609,6 +609,107 @@ tackling some reading for another class.
 Part 2 will consider richer data sources with hierarchical structure 
 that we wish to preserve in the treemap. 
 
+## Part 2: Hierarchically structured data
+
+The power of treemaps as a data visualization technique is in 
+presenting data that already has a hierarchical structure.  Humans 
+are not good at visually comparing sizes of more than a very small 
+number of rectangles.  Consider the two rectangles labeled '3' in 
+the last example above.  Can you see that they are the same size? 
+It is more likely that you can discern at a glance that the 
+rectangle labeled 9 and that labeled 7 in the first column are 
+together still a little less than the adjacent rectangle labeled 20. 
+If our data has a natural hierarchical structure, and if that 
+structure is preserved in the treemap representation, then  a treemap 
+can help us see relationships within a small group, and between larger 
+groups, not so much between parts of different large groups.
+
+We will proceed in two steps.  First we will add the ability to deal 
+with _nested_ lists of integers like `[3, [9, 2], 4, 8]`.  We say 
+the list `[9, 2]` is _nested_ within the outer list.  We will ensure 
+that `[9, 2]` is a rectangular group within the treemap depiction, 
+so that it is easy to visually compare the sizes of those elements. 
+Finally, we will add support for Python dictionaries so that we can 
+associate names with items and use those names in labels.  
+
+### Nested lists
+
+A _nested_ list is a list that may have other lists as elements. A 
+nested list of integers can be defined recursively:  A list 
+containing only integers and nested lists of integers is a nested 
+list of integers.   We can even go a little farther and accept a 
+single item as a nested list.   Like a recursive algorithm, we can 
+define a recursive data structure by identifying a base case and a 
+recursive case: 
+- (_Base case_) An integer is a nested list of integers
+- (_Recursive case_) A list of nested lists of integers is a nested 
+  list of integers
+
+  
+For example
+-  `42` is a nested list of integers
+- `[12, 3, 18]` is a nested list of integers
+- `[12, [3, 18], [[4, 2], 1]]` is a nested list of integers
+
+Recent versions of Python 3 allow us to construct a type annotation 
+for such a recursive structure by introducing a _type variable_: 
+
+```python
+Nest = int | list['Nest']
+```
+The vertical bar is pronounced "or". 
+
+We already have a recursive structure in our `layout` function.  It 
+will require only minor adjustments, which we will get to shortly.  
+The main change will be in our `splitter.py` module, which currently 
+has a `bisect` function that is not recursive.  We will need to 
+change it so that inner nested lists are treated as single items.  
+Instead of looping through items that are individual integers, we 
+will loop through items that might be lists.  
+
+The logic of bisection need not change, except that instead of 
+making partial sums from individual items, we should make partial 
+sums of the _deep sum_ of each item.   For example, if we are 
+bisecting the nested list `[12, [3, 18], [[4, 2], 1]]`, we should
+treat as if it were `[12, 21, 7]`, i.e.,
+`[deep_sum(12), deep_sum([3, 18]), deep_sum([[4, 2], 1]])]`.
+
+We will need to add a `deep_sum` function in `splitter.py`, with 
+this header: 
+
+```python
+def deep_sum(li: Nest) -> int:
+    """Returns the total of all integers in the Nest.
+
+    >>> deep_sum(12)
+    12
+    >>> deep_sum([12, 13, 10])
+    35
+    >>> deep_sum([[7, 3], [1, [2, 7]], 10])
+    30
+    """
+```
+Note that we are using the recursive type definition `Nest`, 
+provided just above, as a type annotation for the input argument 
+"li". This is a fairly recent feature of Python 3.  If you are using 
+an older version of Python 3, you could omit the type annotation for 
+`li`.
+
+To implement this function, use the `isinstance` function to 
+determine whether `li` is an integer or a list, e.g., 
+`if isinstance(li, int)`.  The recursive function echoes the 
+recursive structure of the data, with the same breakdown of base 
+case (an integer) and recursive case (a list of nested lists).
+
+Be sure to execute test your implementation by executing
+`splitter.py` before moving on to the next step. 
+
+### Layout with nested lists 
+
+Function `layout` in `mapper.py` needs little change to deal 
+with nested lists.   
+
+
 
 
 

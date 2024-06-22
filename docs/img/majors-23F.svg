@@ -1,0 +1,199 @@
+
+        <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" >
+        "
+   <defs>
+   <style>
+    text {  text-anchor: middle;  
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 12pt;
+    }
+    .tile_label_white { fill: white; }
+    .tile_label_black { fill: black;  }
+    .group_outline { stroke: red; fill: none; stroke-width: 4; }
+   </style>
+   </defs>
+<rect x="4" y="4" 
+         width="384"  height="592"
+         rx="10"  fill="#ea8c18" 
+         class="tile"/>
+      <text x="196"  y="300"
+         class="tile_label_black" > CS: 77 </text>
+      <rect x="396" y="174" 
+         width="227"  height="422"
+         rx="10"  fill="#c5bb46" 
+         class="tile"/>
+      <text x="509"  y="385"
+         class="tile_label_black" > DSCI: 33 </text>
+      <rect x="396" y="4" 
+         width="190"  height="162"
+         rx="10"  fill="#f08a3e" 
+         class="tile"/>
+      <text x="491"  y="85"
+         class="tile_label_black" > MACS: 11 </text>
+      <rect x="594" y="4" 
+         width="29"  height="162"
+         rx="10"  fill="#d3e827" 
+         class="tile"/>
+      <text x="608"  y="85"
+         class="tile_label_black" > CIS: 2 </text>
+      <rect x="2" y="2" 
+         width="623"  height="596"
+         rx="10"  fill="None" 
+         class="group_outline"/>
+      <rect x="631" y="478" 
+         width="186"  height="118"
+         rx="10"  fill="#f348f7" 
+         class="tile"/>
+      <text x="724"  y="537"
+         class="tile_label_black" > PSY: 8 </text>
+      <rect x="631" y="399" 
+         width="186"  height="71"
+         rx="10"  fill="#faac96" 
+         class="tile"/>
+      <text x="724"  y="434"
+         class="tile_label_black" > PHYS: 5 </text>
+      <rect x="631" y="273" 
+         width="89"  height="118"
+         rx="10"  fill="#5f5838" 
+         class="tile"/>
+      <text x="675"  y="332"
+         class="tile_label_white" > MSCI: 4 </text>
+      <rect x="728" y="273" 
+         width="89"  height="118"
+         rx="10"  fill="#f9df5a" 
+         class="tile"/>
+      <text x="772"  y="332"
+         class="tile_label_black" > MATH: 4 </text>
+      <rect x="631" y="162" 
+         width="75"  height="103"
+         rx="10"  fill="#9fbb1d" 
+         class="tile"/>
+      <text x="668"  y="213"
+         class="tile_label_black" > BI: 3 </text>
+      <rect x="714" y="162" 
+         width="47"  height="103"
+         rx="10"  fill="#f27f88" 
+         class="tile"/>
+      <text x="737"  y="213"
+         class="tile_label_black" > NEUR: 2 </text>
+      <rect x="769" y="218" 
+         width="48"  height="47"
+         rx="10"  fill="#21f2a0" 
+         class="tile"/>
+      <text x="793"  y="241"
+         class="tile_label_black" > MARB: 1 </text>
+      <rect x="769" y="162" 
+         width="48"  height="48"
+         rx="10"  fill="#cbf117" 
+         class="tile"/>
+      <text x="793"  y="186"
+         class="tile_label_black" > ESCI: 1 </text>
+      <rect x="629" y="160" 
+         width="190"  height="438"
+         rx="10"  fill="None" 
+         class="group_outline"/>
+      <rect x="631" y="103" 
+         width="147"  height="51"
+         rx="10"  fill="#1d4f7b" 
+         class="tile"/>
+      <text x="704"  y="128"
+         class="tile_label_white" > PS: 3 </text>
+      <rect x="631" y="4" 
+         width="54"  height="91"
+         rx="10"  fill="#fbe5bd" 
+         class="tile"/>
+      <text x="658"  y="49"
+         class="tile_label_black" > LING: 2 </text>
+      <rect x="693" y="37" 
+         width="85"  height="58"
+         rx="10"  fill="#7dd270" 
+         class="tile"/>
+      <text x="735"  y="66"
+         class="tile_label_black" > EC: 2 </text>
+      <rect x="693" y="4" 
+         width="85"  height="25"
+         rx="10"  fill="#8fb4e5" 
+         class="tile"/>
+      <text x="735"  y="16"
+         class="tile_label_black" > SDSC: 1 </text>
+      <rect x="629" y="2" 
+         width="151"  height="154"
+         rx="10"  fill="None" 
+         class="group_outline"/>
+      <rect x="786" y="83" 
+         width="31"  height="71"
+         rx="10"  fill="#30f721" 
+         class="tile"/>
+      <text x="801"  y="118"
+         class="tile_label_black" > JPN: 1 </text>
+      <rect x="786" y="4" 
+         width="31"  height="71"
+         rx="10"  fill="#6dacf5" 
+         class="tile"/>
+      <text x="801"  y="39"
+         class="tile_label_black" > ENG: 1 </text>
+      <rect x="784" y="2" 
+         width="35"  height="154"
+         rx="10"  fill="None" 
+         class="group_outline"/>
+      <rect x="2" y="2" 
+         width="817"  height="596"
+         rx="10"  fill="None" 
+         class="group_outline"/>
+      <rect x="825" y="347" 
+         width="171"  height="249"
+         rx="10"  fill="#e0fee1" 
+         class="tile"/>
+      <text x="910"  y="471"
+         class="tile_label_black" > EXPL: 15 </text>
+      <rect x="825" y="176" 
+         width="171"  height="163"
+         rx="10"  fill="#aa0310" 
+         class="tile"/>
+      <text x="910"  y="257"
+         class="tile_label_white" > PBA: 10 </text>
+      <rect x="825" y="73" 
+         width="141"  height="95"
+         rx="10"  fill="#75e10c" 
+         class="tile"/>
+      <text x="895"  y="120"
+         class="tile_label_black" > BADM: 5 </text>
+      <rect x="974" y="73" 
+         width="22"  height="95"
+         rx="10"  fill="#65b56f" 
+         class="tile"/>
+      <text x="985"  y="120"
+         class="tile_label_black" > ACTG: 1 </text>
+      <rect x="823" y="71" 
+         width="175"  height="270"
+         rx="10"  fill="None" 
+         class="group_outline"/>
+      <rect x="825" y="4" 
+         width="36"  height="61"
+         rx="10"  fill="#c9d480" 
+         class="tile"/>
+      <text x="843"  y="34"
+         class="tile_label_black" > MUS: 1 </text>
+      <rect x="869" y="4" 
+         width="37"  height="61"
+         rx="10"  fill="#fd9b1c" 
+         class="tile"/>
+      <text x="887"  y="34"
+         class="tile_label_black" > ATCH: 1 </text>
+      <rect x="914" y="4" 
+         width="37"  height="61"
+         rx="10"  fill="#d0e77f" 
+         class="tile"/>
+      <text x="932"  y="34"
+         class="tile_label_black" > ATCF: 1 </text>
+      <rect x="959" y="4" 
+         width="37"  height="61"
+         rx="10"  fill="#6ec723" 
+         class="tile"/>
+      <text x="977"  y="34"
+         class="tile_label_black" > ARH: 1 </text>
+      <rect x="867" y="2" 
+         width="131"  height="65"
+         rx="10"  fill="None" 
+         class="group_outline"/>
+      </svg>
