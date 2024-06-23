@@ -49,6 +49,9 @@ def init(width: int, height: int, svg_path: str = None):
         log.warning(f"Could not open {svg_path}")
 
 # For documentation, I want consistent color choice
+# when describing an example step-by-step.
+# Uncomment this line to produce the same colors on each
+# run with the same input data.
 # random.seed(43)
 
 

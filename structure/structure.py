@@ -7,6 +7,9 @@ import csv
 import argparse
 import io
 
+#Experiment: Regex matching as fallback
+import re
+
 import logging
 import sys
 
@@ -82,9 +85,20 @@ def reshape(flat: io.IOBase, paths: dict[str, list[str]]) -> dict:
         if key in paths:
             path = paths[key]
         else:
-            path = []
+            path = regex_fallback(key, paths)
         insert(key, int(value), path, structure)
     return structure
+
+def regex_fallback(key: str, paths: dict[str, list[str]]) -> list[str]:
+    """If we did not find an exact match, perhaps some of the
+    schema is keyed by regular expressions.
+    FIXME: This linear search of all keys is expensive.
+    """
+    for pattern, path in paths.items():
+        if re.match(pattern, key):
+            return path
+    return []
+
 
 
 def main():
