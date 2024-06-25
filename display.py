@@ -2,7 +2,8 @@
 SVG file in addition to Tk display.
 """
 
-import graphics.graphics as graphics
+import graphics.tk_display as tk
+import graphics.svg_display as svg
 import geometry
 import color_contrast
 from typing import Optional
@@ -13,40 +14,10 @@ logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
-CANVAS: Optional[graphics.GraphWin] = None
-SVG_BUFFER: Optional[list[str]] = None
-SVG_OUT: Optional[io.BytesIO] = None
 
-SVG_HEAD = ""
-SVG_PROLOG = """"
-   <defs>
-   <style>
-    text {  text-anchor: middle;  
-            font-family: Helvetica, Arial, sans-serif;
-            font-size: 12pt;
-    }
-    .tile_label_white { fill: white; }
-    .tile_label_black { fill: black;  }
-    .group_outline { stroke: red; fill: none; stroke-width: 4; }
-   </style>
-   </defs>
-"""
 def init(width: int, height: int, svg_path: str = None):
-    global CANVAS
-    global SVG_BUFFER
-    global SVG_OUT
-    CANVAS = graphics.GraphWin("Treemap", width, height)
-    CANVAS.setCoords(0, 0, width, height)
-    if svg_path == None:
-        svg_path = "treemap.svg"
-    try:
-        SVG_OUT = open(svg_path, "w")
-        svg_header = f"""
-        <svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" >
-        """
-        SVG_BUFFER = [svg_header, SVG_PROLOG]
-    except FileNotFoundError:
-        log.warning(f"Could not open {svg_path}")
+    tk.init(width, height)
+    svg.init(width, height)
 
 # For documentation, I want consistent color choice
 # when describing an example step-by-step.
@@ -75,79 +46,51 @@ def draw_tile(r: geometry.Rect, label: str = None):
     properties["fill_color"] = fill_color
     properties["stroke_color"] = "white"
     properties["label_color"] = label_color
-    draw_rect_tk(r, properties)
-    draw_rect_svg(r, properties)
+    tk.draw_rect(r.ll.x, r.ll.y, r.ur.x, r.ur.y, properties)
+    svg.draw_rect(r.ll.x, r.ll.y, r.ur.x, r.ur.y, properties)
+    llx, lly, urx, ury = r.ll.x, r.ll.y, r.ur.x, r.ur.y
     if label:
-        draw_label_tk(label, r, properties)
-        draw_label_svg(label, r, properties)
+        tk.draw_label(label, llx, lly, urx, ury, properties)
+        svg.draw_label(label, llx, lly, urx, ury, properties)
+
+def begin_group(label: str, r: geometry.Rect):
+    """A group contains multiple rectangular regions.
+    Rendering may differ between SVG and Tk versions,
+    but in both cases we want to show hierarchy.
+    """
+    # Allocate color whether or not we use it, to
+    # maintain consistency between Tk display and SVG
+    fill_color, stroke_color = color_contrast.next_color()
+    # Tk version - outline the group in red
+    # Label is not visible
+    properties = {"margin": 2, "class": "group_outline"}
+    properties["fill_color"] = None
+    properties["stroke_color"] = "red"
+    tk.draw_rect(r.ll.x, r.ll.y, r.ur.x, r.ur.y, properties)
+    # SVG version - create SVG group
+    properties["fill_color"] = fill_color
+    properties["stroke_color"] = stroke_color
+    svg.begin_group(label, r.ll.x, r.ll.y, r.ur.x, r.ur.y, properties)
+
+def end_group():
+    """Must be matched with begin_group"""
+    # Tk:  Nothing to do
+    # SVG: Ends the SVG group
+    svg.end_group()
+
+
 
 def outline_group(r: geometry.Rect):
     log.debug(f"Outlining {r}")
     properties = {"margin": 2, "class": "group_outline"}
     properties["fill_color"] = None
     properties["stroke_color"] = "red"
-    draw_rect_tk(r, properties)
-    draw_rect_svg(r, properties)
+    tk.draw_rect(r.ll.x, r.ll.y, r.ur.x, r.ur.y, properties)
+    svg.draw_rect(r.ll.x, r.ll.y, r.ur.x, r.ur.y, properties)
 
-def draw_rect_tk(r: geometry.Rect, properties: dict):
-    """Draw and label the rectangle on the Tk (Python built-in) display"""
-    assert CANVAS, "Did you forget to initialize the window?"
-    margin = properties["margin"]
-    image = graphics.Rectangle(graphics.Point(r.ll.x+margin, r.ll.y+margin),
-                              graphics.Point(r.ur.x-margin, r.ur.y-margin))
-    fill = properties["fill_color"]
-    if fill:
-        image.setFill(fill)
-    stroke = properties["stroke_color"]
-    if stroke:
-        image.setOutline(stroke)
-    image.draw(CANVAS)
-
-
-def draw_rect_svg(r: geometry.Rect, properties: dict):
-    """Emit display directions for SVG rendering"""
-    # Flip to orient y upward
-    y_extent = CANVAS.height
-    ll_y = y_extent - r.ur.y
-    ur_y = y_extent - r.ll.y
-    margin = properties["margin"]
-    css_class = properties["class"]
-    SVG_BUFFER.append(
-    f"""<rect x="{r.ll.x+margin}" y="{ll_y+margin}" 
-         width="{r.ur.x - r.ll.x - 2* margin}"  height="{r.ur.y - r.ll.y - 2 * margin}"
-         rx="10"  fill="{properties["fill_color"]}" 
-         class="{css_class}"/>
-      """)
-#    stroke="{properties["stroke_color"]}
-
-def draw_label_tk(label: str, r: geometry.Rect, properties: dict):
-    label = graphics.Text(graphics.Point((r.ll.x + r.ur.x)/2, (r.ll.y + r.ur.y)/2), label)
-    label.setSize(12)
-    label.setFace("helvetica")
-    label.setTextColor(properties["label_color"])
-    label.draw(CANVAS)
-
-
-def draw_label_svg(label: str, r: geometry.Rect, properties: dict):
-    # Flip to orient y upward
-    y_extent = CANVAS.height
-    ll_y = y_extent - r.ur.y
-    ur_y = y_extent - r.ll.y
-    center_x = (r.ur.x + r.ll.x) // 2
-    center_y = (ll_y + ur_y) // 2
-    SVG_BUFFER.append(
-    f"""<text x="{center_x}"  y="{center_y}"
-         class="tile_label_{properties["label_color"]}" > {label} </text>
-      """)
 
 
 def wait_close():
-    """Hold display on screen until user presses enter"""
-    if SVG_BUFFER:
-        SVG_BUFFER.append("</svg>")
-        SVG_OUT.write("".join(SVG_BUFFER))
-        SVG_OUT.close()
-    print("Click window to close it")
-    CANVAS.getMouse()
-    CANVAS.close()
-
+    """Hold display on screen until user indicates finish"""
+    svg.close()
+    tk.wait_close()

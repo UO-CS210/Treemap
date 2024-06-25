@@ -124,7 +124,7 @@ detail of the design.  In most cases you will revise the design of
 your code multiple times as the consequences of your design 
 decisions become apparent.  But you must have a clear concept of 
 your solution strategy before you begin. Otherwise, your
-muddy concept will  
+muddy concept will
 mire your code so badly that you must abandon it and start over.
 
 In what follows, I have provided some code that manipulates 
@@ -487,8 +487,10 @@ After we have created the list `partials`, we can make one more loop
 at the balance point 
 where `partials[i]` is first greater than `sum(li) // 2`.  Don't 
 call `sum(li) // 2` each time through the loop! Compute it just once, 
-store it in a variable, and use it over and over in the loop.  You 
-already have `sum(li)` as the last of the partial sums you 
+_before_ the loop, store it in a variable, and use it over and over in 
+the loop.  
+
+You already have `sum(li)` as the last of the partial sums you 
 calculated above, so you can reuse that.  
 
 When you have replaced the _quadratic time_ algorithm that
@@ -660,10 +662,10 @@ Nest = int | list['Nest']
 The vertical bar is pronounced "or". 
 
 We already have a recursive structure in our `layout` function.  It 
-will require only minor adjustments, which we will get to shortly.  
+will require only minor adjustments, which we will get to shortly.
 The main change will be in our `splitter.py` module, which currently 
 has a `bisect` function that is not recursive.  We will need to 
-change it so that inner nested lists are treated as single items.  
+change it so that inner nested lists are treated as single items.
 Instead of looping through items that are individual integers, we 
 will loop through items that might be lists.  
 
@@ -704,10 +706,127 @@ case (an integer) and recursive case (a list of nested lists).
 Be sure to execute test your implementation by executing
 `splitter.py` before moving on to the next step. 
 
+When `deep_sum` is working correctly, we can modify our `bisect` 
+function to use it.  Let's begin by adding a couple of test cases 
+for nested lists: 
+
+```python
+def bisect(li: Nest) -> tuple[Nest, Nest]:
+    """Returns (prefix, suffix) such that prefix+suffix == li
+    and abs(sum(prefix) - sum(suffix)) is minimal.
+    Breaks tie in favor of earlier split, e.g., bisect([1,5,1]) == ([1], [5, 1]).
+    Requires len(li) >= 2, and all elements of li positive.
+
+    >>> bisect([1, 1, 2])  # Perfect balance
+    ([1, 1], [2])
+    >>> bisect([2, 1, 1])  # Perfect balance
+    ([2], [1, 1])
+    >>> bisect([1, 2, 1])  # Equally bad either way; split before pivot
+    ([1], [2, 1])
+    >>> bisect([6, 5, 4, 3, 2, 1])  # Must include element at split
+    ([6, 5], [4, 3, 2, 1])
+    >>> bisect([1, 2, 3, 4, 5])
+    ([1, 2, 3], [4, 5])
+    >>> bisect([1, 1, [1, 1]])
+    ([1, 1], [[1, 1]])
+    >>> bisect([[3, 3], 5, [2, 2], [1, 1, 1]])
+    ([[3, 3], 5], [[2, 2], [1, 1, 1]])
+    """
+```
+
+Initially these test cases will fail with exceptions: 
+
+```pycon
+File "/your/path/splitter.py", line 50, in splitter.bisect
+Failed example:
+    bisect([[3, 3], 5, [2, 2], [1, 1, 1]])
+Exception raised:
+    ...
+    total += li[i]
+    TypeError: unsupported operand type(s) for +=: 'int' and 'list'
+```
+
+This is because `li[i]` might be a list.  We can repair this by 
+using the deep sum of the element instead: 
+
+```python
+        total += deep_sum(li[i])
+```
+
+Recall that the deep sum of an integer is just the value of the 
+integer, so we don't need to check whether `li[i]` is a an integer or 
+a list. 
+
+Some calls to `sum` may also need to be replaced by calls to 
+`deep_sum`.  
+
+When the `bisect` function as well as the `deep_sum` function 
+are passing all tests, we can employ the new version of `bisect` 
+in the `layout` function of `mapper.py`. 
+
 ### Layout with nested lists 
 
-Function `layout` in `mapper.py` needs little change to deal 
-with nested lists.   
+Function `layout` in `mapper.py` should still be handling "flat" 
+(non-nested) lists of integers without any change.  It needs only a little change to deal 
+with nested lists.   The recursive case (bisecting the list and 
+layout each part) remains the same.  The difference is in the 
+base case, because a list of length 1 could contain a single integer 
+or a list of integers.  We had the following cases: 
+
+- (_Base case_)  `li` has only one element. 
+   Draw the tile.
+- (_Recursive case_) `li` has two or more elements.
+   Bisect the list and the rectangle, and lay out both parts.
+
+For the recursive case, it does not matter whether the elements are 
+lists or integers, as long as we have calculated their sums 
+correctly. It is the base case that needs refinement: 
+
+- (_Base case_)  `li` has only one element. 
+  - That element is an integer. 
+     Draw the tile.
+  - That element is a list.  Lay out the list. 
+- (_Recursive case_) `li` has two or more elements.
+   Bisect the list and the rectangle, and lay out both parts.
+
+There may also be a couple calls to `sum` in `layout` that will need 
+to be replaced by `splitter.deep_sum`.  That's all!   Make the 
+needed changes and check your work by attempting to build treemaps 
+for `data/small_nested_list.json` (`[3, [9, 2], 4, 8]`)
+and then `data/medium_nested_list.json`
+
+```commandline
+python3 mapper.py data/small_nested_list.json 400 400
+```
+![Small nested treemap](img/small_nested_treemap.svg)
+
+```commandline
+python3 mapper.py data/medium_nested_list.json 400 400
+```
+
+![Medium nested treemap](img/medium_nested_list.svg)
+
+### Checkpoint
+
+So far you should have
+
+- `splitter.py`
+  - a function `deep_sum` that returns a the sum of all the integers 
+    in a nested list of integers, e.g.,
+    `deep_sum([1, [2, 3], 4]) == 10`.
+  - a function `bisect` that returns two parts of a nested list of 
+    integers, e.g.,
+    `splitter.bisect([1, [2, 3], 4]) == ([1, [2, 3]], [4])`.
+  - `mapper.py`
+    - a function `layout` that can create a treemap of a nested list 
+      of integers. 
+
+### Nested categorical data
+
+TBD
+
+
+
 
 
 

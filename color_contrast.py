@@ -27,7 +27,7 @@ import random
 import logging
 logging.basicConfig()
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 
 def brightness(r: int, g: int, b: int) -> float:
     """Relative luminance, for determining whether white or
