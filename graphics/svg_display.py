@@ -23,8 +23,8 @@ SVG_PROLOG = """"
     }
     .tile_label_white { fill: white; }
     .tile_label_black { fill: black;  }
-    .group_outline { stroke: red; fill: none; stroke-width: 4; }
-    .group_outline:hover { fill: yellow; }
+    .group_outline { stroke: red; fill: white; stroke-width: 1; }
+    .group_outline:hover { fill: red; }
    </style>
    </defs>
 """
@@ -64,17 +64,20 @@ def draw_rect(llx, lly, urx, ury, properties: dict):
          class="{css_class}"/>
       """)
 
-def begin_group(label: str,
+def begin_group(label: str | None,
                     llx: int, lly: int, urx: int, ury: int,
                     properties: dict):
     margin = properties["margin"]
+    if label:
+        group_label = f"\n<title>{label}</title>"
+    else:
+        group_label = ""
     SVG_BUFFER.append(
-        f"""<g class="group">
-        <title>{label}</title>
+        f"""<g class="group">{group_label}
         <rect x="{llx + margin}" y="{lly + margin}" 
         width="{urx - llx - 2 * margin}"  height="{ury - lly - 2 * margin}"
-        rx="5"  title="{label}"  
-        class="group-outline" />
+        rx="5"  
+        class="group_outline" />
         """
     )
 

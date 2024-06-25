@@ -823,7 +823,7 @@ So far you should have
 
 ### Nested categorical data
 
-TBD
+
 
 
 

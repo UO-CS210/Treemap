@@ -27,12 +27,37 @@ def init(width: int, height: int, svg_path: str = None):
 
 
 """Tactics for drawing on Tk and SVG (and potentially others in future): 
+
 Attributes that can be computed once and then interpreted for each medium
 are kept in a property table, rather than passing a whole zoo of parameters
-to each medium-specific drawing function. 
+to each medium-specific drawing function.
+
+For now, colors are randomly generated for each group or top-level individual tile.
 """
 
-def draw_tile(r: geometry.Rect, label: str = None):
+# ------
+# Each color entry is fill color, label color
+COLOR_STACK: list[tuple[str, str]] = []  # Initially empty
+
+def push_new_color():
+    COLOR_STACK.append(color_contrast.next_color())
+
+def pop_color():
+    COLOR_STACK.pop()
+
+def set_tile_color(properties: dict):
+    """Adds tile color properties"""
+    if len(COLOR_STACK) > 0:
+        fill_color, label_color = COLOR_STACK[-1]
+    else:
+        fill_color, label_color = color_contrast.next_color()
+    properties["fill_color"] = fill_color
+    properties["stroke_color"] = "white"
+    properties["label_color"] = label_color
+
+# ------
+
+def draw_tile(r: geometry.Rect, label: str | None = None):
     """Draw the tile (on both media).
      Displays on Tk (Python built-in graphics) and
      also writes corresponding graphics into buffer to
@@ -43,9 +68,7 @@ def draw_tile(r: geometry.Rect, label: str = None):
     log.debug(f"Drawing {r}")
     properties = {"margin": 4, "class": "tile"}
     fill_color, label_color = color_contrast.next_color()
-    properties["fill_color"] = fill_color
-    properties["stroke_color"] = "white"
-    properties["label_color"] = label_color
+    set_tile_color(properties)
     tk.draw_rect(r.ll.x, r.ll.y, r.ur.x, r.ur.y, properties)
     svg.draw_rect(r.ll.x, r.ll.y, r.ur.x, r.ur.y, properties)
     llx, lly, urx, ury = r.ll.x, r.ll.y, r.ur.x, r.ur.y
@@ -53,11 +76,15 @@ def draw_tile(r: geometry.Rect, label: str = None):
         tk.draw_label(label, llx, lly, urx, ury, properties)
         svg.draw_label(label, llx, lly, urx, ury, properties)
 
-def begin_group(label: str, r: geometry.Rect):
+def begin_group(r: geometry.Rect, label: str | None = None):
     """A group contains multiple rectangular regions.
     Rendering may differ between SVG and Tk versions,
     but in both cases we want to show hierarchy.
+    The optional label appears as a tool-tip in the SVG version.
     """
+    if not label:
+        label = ""
+    push_new_color()
     # Allocate color whether or not we use it, to
     # maintain consistency between Tk display and SVG
     fill_color, stroke_color = color_contrast.next_color()
@@ -68,14 +95,14 @@ def begin_group(label: str, r: geometry.Rect):
     properties["stroke_color"] = "red"
     tk.draw_rect(r.ll.x, r.ll.y, r.ur.x, r.ur.y, properties)
     # SVG version - create SVG group
-    properties["fill_color"] = fill_color
-    properties["stroke_color"] = stroke_color
+    set_tile_color(properties)
     svg.begin_group(label, r.ll.x, r.ll.y, r.ur.x, r.ur.y, properties)
 
 def end_group():
     """Must be matched with begin_group"""
     # Tk:  Nothing to do
     # SVG: Ends the SVG group
+    pop_color()
     svg.end_group()
 
 
