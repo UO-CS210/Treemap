@@ -1,8 +1,6 @@
 # Treemap
 
-_This is work in progress ... not complete as of 2024-06-18_
-
-![A treemap of CS course enrollment by major](docs/img/squarify-lots.png)
+![A treemap of CS course enrollment by major](docs/img/majors-23F.svg)
 
 Treemap is a student project an introductory computer science course
 (CS1 in the ACM curriculum model, CS 210 at U. Oregon, CS 161 at 
