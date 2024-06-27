@@ -1,199 +1,216 @@
 
-        <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" >
+        <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="768" >
         "
    <defs>
    <style>
     text {  text-anchor: middle;  
             font-family: Helvetica, Arial, sans-serif;
             font-size: 12pt;
+            white-space: pre-wrap; 
     }
-    .tile_label_white { fill: white; }
-    .tile_label_black { fill: black;  }
-    .group_outline { stroke: red; fill: none; stroke-width: 4; }
+    tspan { white-space: pre-wrap; }
+    .tile_label_white { fill: white;  white-space: pre-wrap; }
+    .tile_label_black { fill: black;   white-space: pre-wrap; }
+    .group_outline { stroke: red; fill: white; stroke-width: 1; }
+    .group_outline:hover { fill: red; }
    </style>
    </defs>
-<rect x="4" y="4" 
-         width="384"  height="592"
-         rx="10"  fill="#ea8c18" 
+<g class="group">
+<title>cas</title>
+        <rect x="2" y="2" 
+        width="837"  height="764"
+        rx="5"  
+        class="group_outline" />
+        <g class="group">
+<title>School of Computer and Data Sciences</title>
+        <rect x="2" y="2" 
+        width="638"  height="764"
+        rx="5"  
+        class="group_outline" />
+        <rect x="4" y="4" 
+         width="634"  height="472"
+         rx="10"  fill="#3020c2" 
          class="tile"/>
-      <text x="196"  y="300"
-         class="tile_label_black" > CS: 77 </text>
-      <rect x="396" y="174" 
-         width="227"  height="422"
-         rx="10"  fill="#c5bb46" 
+      <text x="321"  y="240"
+         class="tile_label_white" ><tspan>CS</tspan><br /><tspan x="321" dy="1em">77</tspan></text>
+      <rect x="4" y="484" 
+         width="452"  height="280"
+         rx="10"  fill="#3020c2" 
          class="tile"/>
-      <text x="509"  y="385"
-         class="tile_label_black" > DSCI: 33 </text>
-      <rect x="396" y="4" 
-         width="190"  height="162"
-         rx="10"  fill="#f08a3e" 
+      <text x="230"  y="624"
+         class="tile_label_white" ><tspan>DSCI</tspan><br /><tspan x="230" dy="1em">33</tspan></text>
+      <rect x="464" y="484" 
+         width="174"  height="235"
+         rx="10"  fill="#3020c2" 
          class="tile"/>
-      <text x="491"  y="85"
-         class="tile_label_black" > MACS: 11 </text>
-      <rect x="594" y="4" 
-         width="29"  height="162"
-         rx="10"  fill="#d3e827" 
+      <text x="551"  y="601"
+         class="tile_label_white" ><tspan>MACS</tspan><br /><tspan x="551" dy="1em">11</tspan></text>
+      <rect x="464" y="727" 
+         width="174"  height="37"
+         rx="10"  fill="#3020c2" 
          class="tile"/>
-      <text x="608"  y="85"
-         class="tile_label_black" > CIS: 2 </text>
-      <rect x="2" y="2" 
-         width="623"  height="596"
-         rx="10"  fill="None" 
-         class="group_outline"/>
-      <rect x="631" y="478" 
-         width="186"  height="118"
-         rx="10"  fill="#f348f7" 
+      <text x="551"  y="745"
+         class="tile_label_white" ><tspan>CIS</tspan><br /><tspan x="551" dy="1em">2</tspan></text>
+      </g><g class="group">
+<title>Natural Sciences</title>
+        <rect x="644" y="2" 
+        width="195"  height="561"
+        rx="5"  
+        class="group_outline" />
+        <rect x="646" y="4" 
+         width="191"  height="153"
+         rx="10"  fill="#380b64" 
          class="tile"/>
-      <text x="724"  y="537"
-         class="tile_label_black" > PSY: 8 </text>
-      <rect x="631" y="399" 
-         width="186"  height="71"
-         rx="10"  fill="#faac96" 
+      <text x="741"  y="80"
+         class="tile_label_white" ><tspan>PSY</tspan><br /><tspan x="741" dy="1em">8</tspan></text>
+      <rect x="646" y="165" 
+         width="191"  height="93"
+         rx="10"  fill="#380b64" 
          class="tile"/>
-      <text x="724"  y="434"
-         class="tile_label_black" > PHYS: 5 </text>
-      <rect x="631" y="273" 
-         width="89"  height="118"
-         rx="10"  fill="#5f5838" 
+      <text x="741"  y="211"
+         class="tile_label_white" ><tspan>PHYS</tspan><br /><tspan x="741" dy="1em">5</tspan></text>
+      <rect x="646" y="266" 
+         width="91"  height="153"
+         rx="10"  fill="#380b64" 
          class="tile"/>
-      <text x="675"  y="332"
-         class="tile_label_white" > MSCI: 4 </text>
-      <rect x="728" y="273" 
-         width="89"  height="118"
-         rx="10"  fill="#f9df5a" 
+      <text x="691"  y="342"
+         class="tile_label_white" ><tspan>MSCI</tspan><br /><tspan x="691" dy="1em">4</tspan></text>
+      <rect x="745" y="266" 
+         width="92"  height="153"
+         rx="10"  fill="#380b64" 
          class="tile"/>
-      <text x="772"  y="332"
-         class="tile_label_black" > MATH: 4 </text>
-      <rect x="631" y="162" 
-         width="75"  height="103"
-         rx="10"  fill="#9fbb1d" 
+      <text x="791"  y="342"
+         class="tile_label_white" ><tspan>MATH</tspan><br /><tspan x="791" dy="1em">4</tspan></text>
+      <rect x="646" y="427" 
+         width="77"  height="134"
+         rx="10"  fill="#380b64" 
          class="tile"/>
-      <text x="668"  y="213"
-         class="tile_label_black" > BI: 3 </text>
-      <rect x="714" y="162" 
-         width="47"  height="103"
-         rx="10"  fill="#f27f88" 
+      <text x="684"  y="494"
+         class="tile_label_white" ><tspan>BI</tspan><br /><tspan x="684" dy="1em">3</tspan></text>
+      <rect x="731" y="427" 
+         width="106"  height="63"
+         rx="10"  fill="#380b64" 
          class="tile"/>
-      <text x="737"  y="213"
-         class="tile_label_black" > NEUR: 2 </text>
-      <rect x="769" y="218" 
-         width="48"  height="47"
-         rx="10"  fill="#21f2a0" 
+      <text x="784"  y="458"
+         class="tile_label_white" ><tspan>NEUR</tspan><br /><tspan x="784" dy="1em">2</tspan></text>
+      <rect x="731" y="498" 
+         width="49"  height="63"
+         rx="10"  fill="#380b64" 
          class="tile"/>
-      <text x="793"  y="241"
-         class="tile_label_black" > MARB: 1 </text>
-      <rect x="769" y="162" 
-         width="48"  height="48"
-         rx="10"  fill="#cbf117" 
+      <text x="755"  y="529"
+         class="tile_label_white" ><tspan>MARB</tspan><br /><tspan x="755" dy="1em">1</tspan></text>
+      <rect x="788" y="498" 
+         width="49"  height="63"
+         rx="10"  fill="#380b64" 
          class="tile"/>
-      <text x="793"  y="186"
-         class="tile_label_black" > ESCI: 1 </text>
-      <rect x="629" y="160" 
-         width="190"  height="438"
-         rx="10"  fill="None" 
-         class="group_outline"/>
-      <rect x="631" y="103" 
-         width="147"  height="51"
-         rx="10"  fill="#1d4f7b" 
+      <text x="812"  y="529"
+         class="tile_label_white" ><tspan>ESCI</tspan><br /><tspan x="812" dy="1em">1</tspan></text>
+      </g><g class="group">
+<title>Social Sciences</title>
+        <rect x="644" y="567" 
+        width="195"  height="158"
+        rx="5"  
+        class="group_outline" />
+        <rect x="646" y="569" 
+         width="66"  height="154"
+         rx="10"  fill="#e4a60d" 
          class="tile"/>
-      <text x="704"  y="128"
-         class="tile_label_white" > PS: 3 </text>
-      <rect x="631" y="4" 
-         width="54"  height="91"
-         rx="10"  fill="#fbe5bd" 
+      <text x="679"  y="646"
+         class="tile_label_black" ><tspan>PS</tspan><br /><tspan x="679" dy="1em">3</tspan></text>
+      <rect x="720" y="569" 
+         width="117"  height="56"
+         rx="10"  fill="#e4a60d" 
          class="tile"/>
-      <text x="658"  y="49"
-         class="tile_label_black" > LING: 2 </text>
-      <rect x="693" y="37" 
-         width="85"  height="58"
-         rx="10"  fill="#7dd270" 
+      <text x="778"  y="597"
+         class="tile_label_black" ><tspan>LING</tspan><br /><tspan x="778" dy="1em">2</tspan></text>
+      <rect x="720" y="633" 
+         width="75"  height="90"
+         rx="10"  fill="#e4a60d" 
          class="tile"/>
-      <text x="735"  y="66"
-         class="tile_label_black" > EC: 2 </text>
-      <rect x="693" y="4" 
-         width="85"  height="25"
-         rx="10"  fill="#8fb4e5" 
+      <text x="757"  y="678"
+         class="tile_label_black" ><tspan>EC</tspan><br /><tspan x="757" dy="1em">2</tspan></text>
+      <rect x="803" y="633" 
+         width="34"  height="90"
+         rx="10"  fill="#e4a60d" 
          class="tile"/>
-      <text x="735"  y="16"
-         class="tile_label_black" > SDSC: 1 </text>
-      <rect x="629" y="2" 
-         width="151"  height="154"
-         rx="10"  fill="None" 
-         class="group_outline"/>
-      <rect x="786" y="83" 
-         width="31"  height="71"
-         rx="10"  fill="#30f721" 
+      <text x="820"  y="678"
+         class="tile_label_black" ><tspan>SDSC</tspan><br /><tspan x="820" dy="1em">1</tspan></text>
+      </g><g class="group">
+<title>Humanities</title>
+        <rect x="644" y="729" 
+        width="195"  height="37"
+        rx="5"  
+        class="group_outline" />
+        <rect x="646" y="731" 
+         width="91"  height="33"
+         rx="10"  fill="#3a0257" 
          class="tile"/>
-      <text x="801"  y="118"
-         class="tile_label_black" > JPN: 1 </text>
-      <rect x="786" y="4" 
-         width="31"  height="71"
-         rx="10"  fill="#6dacf5" 
+      <text x="691"  y="747"
+         class="tile_label_white" ><tspan>JPN</tspan><br /><tspan x="691" dy="1em">1</tspan></text>
+      <rect x="745" y="731" 
+         width="92"  height="33"
+         rx="10"  fill="#3a0257" 
          class="tile"/>
-      <text x="801"  y="39"
-         class="tile_label_black" > ENG: 1 </text>
-      <rect x="784" y="2" 
-         width="35"  height="154"
-         rx="10"  fill="None" 
-         class="group_outline"/>
-      <rect x="2" y="2" 
-         width="817"  height="596"
-         rx="10"  fill="None" 
-         class="group_outline"/>
-      <rect x="825" y="347" 
-         width="171"  height="249"
-         rx="10"  fill="#e0fee1" 
+      <text x="791"  y="747"
+         class="tile_label_white" ><tspan>ENG</tspan><br /><tspan x="791" dy="1em">1</tspan></text>
+      </g></g><rect x="845" y="4" 
+         width="175"  height="321"
+         rx="10"  fill="#b0a1ba" 
          class="tile"/>
-      <text x="910"  y="471"
-         class="tile_label_black" > EXPL: 15 </text>
-      <rect x="825" y="176" 
-         width="171"  height="163"
-         rx="10"  fill="#aa0310" 
+      <text x="932"  y="164"
+         class="tile_label_black" ><tspan>EXPL (Undeclared)</tspan><br /><tspan x="932" dy="1em">15</tspan></text>
+      <g class="group">
+<title>Business</title>
+        <rect x="843" y="331" 
+        width="179"  height="347"
+        rx="5"  
+        class="group_outline" />
+        <rect x="845" y="333" 
+         width="175"  height="211"
+         rx="10"  fill="#ba95d7" 
          class="tile"/>
-      <text x="910"  y="257"
-         class="tile_label_white" > PBA: 10 </text>
-      <rect x="825" y="73" 
-         width="141"  height="95"
-         rx="10"  fill="#75e10c" 
+      <text x="932"  y="438"
+         class="tile_label_black" ><tspan>PBA</tspan><br /><tspan x="932" dy="1em">10</tspan></text>
+      <rect x="845" y="552" 
+         width="144"  height="124"
+         rx="10"  fill="#ba95d7" 
          class="tile"/>
-      <text x="895"  y="120"
-         class="tile_label_black" > BADM: 5 </text>
-      <rect x="974" y="73" 
-         width="22"  height="95"
-         rx="10"  fill="#65b56f" 
+      <text x="917"  y="614"
+         class="tile_label_black" ><tspan>BADM</tspan><br /><tspan x="917" dy="1em">5</tspan></text>
+      <rect x="997" y="552" 
+         width="23"  height="124"
+         rx="10"  fill="#ba95d7" 
          class="tile"/>
-      <text x="985"  y="120"
-         class="tile_label_black" > ACTG: 1 </text>
-      <rect x="823" y="71" 
-         width="175"  height="270"
-         rx="10"  fill="None" 
-         class="group_outline"/>
-      <rect x="825" y="4" 
-         width="36"  height="61"
-         rx="10"  fill="#c9d480" 
+      <text x="1008"  y="614"
+         class="tile_label_black" ><tspan>ACTG</tspan><br /><tspan x="1008" dy="1em">1</tspan></text>
+      </g><rect x="845" y="684" 
+         width="37"  height="80"
+         rx="10"  fill="#f9b412" 
          class="tile"/>
-      <text x="843"  y="34"
-         class="tile_label_black" > MUS: 1 </text>
-      <rect x="869" y="4" 
-         width="37"  height="61"
-         rx="10"  fill="#fd9b1c" 
+      <text x="863"  y="724"
+         class="tile_label_black" ><tspan>MUS</tspan><br /><tspan x="863" dy="1em">1</tspan></text>
+      <g class="group">
+<title>Design</title>
+        <rect x="888" y="682" 
+        width="134"  height="84"
+        rx="5"  
+        class="group_outline" />
+        <rect x="890" y="684" 
+         width="38"  height="80"
+         rx="10"  fill="#50a8bf" 
          class="tile"/>
-      <text x="887"  y="34"
-         class="tile_label_black" > ATCH: 1 </text>
-      <rect x="914" y="4" 
-         width="37"  height="61"
-         rx="10"  fill="#d0e77f" 
+      <text x="909"  y="724"
+         class="tile_label_black" ><tspan>ATCH</tspan><br /><tspan x="909" dy="1em">1</tspan></text>
+      <rect x="936" y="684" 
+         width="38"  height="80"
+         rx="10"  fill="#50a8bf" 
          class="tile"/>
-      <text x="932"  y="34"
-         class="tile_label_black" > ATCF: 1 </text>
-      <rect x="959" y="4" 
-         width="37"  height="61"
-         rx="10"  fill="#6ec723" 
+      <text x="955"  y="724"
+         class="tile_label_black" ><tspan>ATCF</tspan><br /><tspan x="955" dy="1em">1</tspan></text>
+      <rect x="982" y="684" 
+         width="38"  height="80"
+         rx="10"  fill="#50a8bf" 
          class="tile"/>
-      <text x="977"  y="34"
-         class="tile_label_black" > ARH: 1 </text>
-      <rect x="867" y="2" 
-         width="131"  height="65"
-         rx="10"  fill="None" 
-         class="group_outline"/>
-      </svg>
+      <text x="1001"  y="724"
+         class="tile_label_black" ><tspan>ARH</tspan><br /><tspan x="1001" dy="1em">1</tspan></text>
+      </g></svg>

@@ -63,3 +63,42 @@ treemapping project, all in JSON (Javascript Object Notation) format.
   probably meaningless to anyone outside that university.
 ![Majors of students in a CS1 class](../docs/img/majors-23F.svg)
 
+- `ocean-biomass.json` : Adapted from figure 1 part A, 
+[The Biomass Composition of the Oceans: A Blueprint of Our Blue Planet](
+https://doi.org/10.1016/j.cell.2019.11.018)
+Cell vol 179, issue 7, 12 Dec 2019, 1451-1454.  I have added 
+  grouping into prokaryotes and eukaryotes.  The ratio between 
+  plants and animals is surprising (shouldn't there be more plants 
+  than animals consuming plants?), but the published article shows 
+  four times as much biomass of animals.  And as much mass of 
+  protists as of animals ... weird! 
+
+>"We further observe that in the
+> marine environment, animals, protists, and bacteria together account
+> for ≈80% of total marine biomass, whereas on land, they represent a
+> mere ≈2% of the total biomass (Bar-On et al., 2018)."
+
+The authors explain: 
+
+> At first glance, this result might seem paradoxical. How can a small
+> mass of producers sustain a larger biomass of consumers? The answer
+> lies in the relative turnover rate of producer and consumer biomass.
+> In the ocean, producer turnover occurs over fast timescales of days,
+> whereas larger consumers like fish or crustaceans have much longer
+> turnover times, on the order of months to years (Sheldon et al.,
+> 1972). The flux of energy, which is proportional to biomass and
+> inversely proportional to turnover time, is still higher in producers
+> than in consumers as dictated by the conservation of energy. That is,
+> even though producer biomass is small, it turns over much more
+> rapidly, and thus producer productivity is higher than consumer
+> productivity.
+
+The Cell article uses a Voronoi treemap diagram. It is interesting to 
+compare this to a conventional "squarified" treemap produced by this 
+project. 
+
+This data also suggests that an additional non-categorical grouping 
+option would be useful for data legibility, as grouping animals with 
+protists (despite having no natural category) would make it easier to
+see that they are the same size.  You can test this by adding a 
+meaningless category (nested dictionary) that groups them.  

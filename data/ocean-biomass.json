@@ -1,0 +1,13 @@
+{
+  "viruses": 3,
+  "prokaryotes": {
+    "bacteria": 150,
+    "archaea": 30
+  },
+  "eukaryotes": {
+    "protists": 200,
+    "animals": 200,
+    "fungi": 30,
+    "plants": 50
+  }
+}

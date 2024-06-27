@@ -823,6 +823,251 @@ So far you should have
 
 ### Nested categorical data
 
+So far we can create a hierarchical visualization of hierarchical 
+data, but the visualization is labeled only by quantities.  A more 
+useful data visualization would include meaningful labels.  Instead 
+of individual elements like `10`, we would like individual elements 
+to be pairs like `("Chocolate", 10)`.  We might imagine a nested 
+combination of lists and tuples, like 
+
+```python
+[  ("Cake", [ ("Chocolate", 10), ("Carrot", 4)],
+    ("Ice Cream", [ ("Vanilla", 10), ("Strawberry", 5)]]
+```
+
+A more natural way to represent this structure in Python is with
+dictionaries: 
+
+```python
+{ "Cake": { "Chocolate": 10, "Carrot": 4 },
+  "Ice Cream": { "Vanilla": 10, "Strawberry": 5 }}
+```
+
+The nested dictionary structure is also representable directly in 
+the JSON format.   We will still need lists for our `bisect` 
+function.  We can 
+recover a list of pairs from a dictionary 
+`d` as `list(d.items())`.  
+
+Our type `Nest`, which we will describe both in `mapper.py` and 
+`splitter.py`, now needs options for tuples and dictionaries: 
+
+Nest = int | list['Nest'] | dict[ str, 'Nest'] | tuple[str, Nest]
+
+As when we introduced nested lists, we will need to revise both the 
+`deep_sum` function in `splitter.py` and the `layout` function in 
+`mapper.py` to accommodate dictionaries and tuples.  Wherever we
+encounter a dictionary, we will simply convert it to a list of pairs. 
+
+```python
+    if isinstance(li, dict):
+        li = list(li.items())
+```
+
+You will need this conversion at the beginning of both `deep_sum` 
+and `bisect` to avoid writing a good deal of redundant code to 
+handle dictionaries in those functions. 
+
+This leaves tuples to handle.  In `deep_sum`, the sum for a
+(_label, value_) pair is the deep sum of _value_, regardless of 
+whether _value_ is a single integer or a nested dictionary.  We can 
+use an `isinstance` call to determine that an item is a `tuple`, 
+then extract the _value_ part for a recursive call: 
+
+```python
+        label, value = li
+        return deep_sum(value)
+```
+
+Add a test case to `deep_sum` to check this: 
+```python
+    >>> deep_sum({ "Cake": { "Chocolate": 10, "Carrot": 4 }, "Ice Cream": 15 })
+    29
+```
+
+When this is working, add a test case to `bisect`as well: 
+
+```python
+    >>> bisect({ "Cake": { "Chocolate": 10, "Carrot": 4 }, "Ice Cream": 15 })
+    ([('Cake', {'Chocolate': 10, 'Carrot': 4})], [('Ice Cream', 15)])
+```
+
+With these functions in `splitter.py` working, we are ready to add 
+the needed functionality to the `layout` function in `mapper.py`.  
+As in the functions in the `splitter` module, we will begin by 
+converting `dict`s to `list`s: 
+
+```python
+    if isinstance(li, dict):
+        li = list(li.items())
+```
+
+This leaves `int`, `list`, and `tuple` to handle.  We can handle 
+`int` and `list` as we did for nested lists.   For a tuple (which 
+should be a (_name_, _value_) pair), we need to further 
+differentiate the behavior depending on whether the _value_ part is 
+an integer or a nested dictionary: 
+- If the _value_ part is an integer, we want to draw a rectangle 
+  with the label as well as the integer value.  
+  ``.
+- If the _value_ part is a nested dictionary, then this is a named 
+  group, which we want to indicate in the display.
+
+To draw a labeled rectangle, we can use call `draw_tile` with an 
+additional argument: 
+```python
+        name, value = li
+        ... 
+        display.draw_tile(rect, label=f"{name}\n{value}")
+```
+ 
+To show grouping, the `display` module provides two additional 
+functions to mark the beginning and ending of a group.  It will 
+choose a single color for the whole group (unless it has further 
+subgroups), draw a light outline around the group, and in the SVG 
+diagram it will also add a "hover" effect which can show the name of 
+the group: 
+
+```python
+            display.begin_group(rect, label=name)
+            layout(value, rect)
+            display.end_group()
+```
+
+At this point the recursive function `layout` is more complex than 
+most recursive functions you have encountered for this class, but at 
+its core it still follows the standard form of almost all recursive 
+functions: 
+
+- Identify the base case;  handle that case directly
+- If it is not the base case, make recursive calls to handle 
+  _smaller_ problems.
+
+The extra complexity comes in having multiple ways the base cases 
+and recursive cases can appear: 
+- A single integer or a tuple (_name_, _integer value_) are both 
+  base cases.  
+- The recursive cases could be a dictionary (Python `dict`), a tuple 
+  (_name_, _dictionary_) for a named sub-part, or a list.
+
+None of these are particularly complicated, but we must be careful 
+to recognize and deal appropriately with each case. 
+
+### Checkpoint
+
+At this point you should have a working treemap application.  For 
+example, you should be able to create a treemap representation of 
+the biomass of kingdoms in the ocean: 
+
+```python
+{  "viruses": 3,
+  "prokaryotes": {
+    "bacteria": 150,
+    "archaea": 30
+  },
+  "eukaryotes": {
+    "protists": 200,
+    "animals": 200,
+    "fungi": 30,
+    "plants": 50 }}
+```
+This data set, adapted from Adapted from figure 1 part A, 
+[The Biomass Composition of the Oceans: A Blueprint of Our Blue Planet](
+https://doi.org/10.1016/j.cell.2019.11.018)
+Cell vol 179, issue 7, 12 Dec 2019, 1451-1454,
+illustrates the surprising finding that the biomass of animals in 
+the ocean is greater than the biomass of plants (but _turnover_ of 
+plant biomass is higher). 
+
+Produce the treemap visualization like this: 
+
+```commandline
+python3 mapper.py data/ocean-biomass.json 600 600
+```
+
+![Surprising balance of biomass in the ocean](
+img/ocean-biomass.svg)
+
+You can similarly produce a treemap of student majors in a prior 
+offering of an introductory CS class grouped hierarchically, e.g., 
+showing that roughly half of the students were in majors within the 
+School of Computing and Data Sciences.
+
+```commandline
+python3 mapper.py data/majors-23F.json 1024 768
+```
+
+![Declared majors in an intro CS course](
+img/majors-23F.svg)
+
+The completes the treemap project.
+Turn in `splitter.py` and `mapper.py`.  
+
+## Going farther (optional projects for ambitious students)
+
+There are many ways to extend this project.  Here are a few.  These 
+are _much_ more challenging than completing the project.  These are 
+not little "extra credit" extensions, but rather full-blown projects 
+on their own.  If you 
+want to tackle one of them, I suggest first trying to devise a plan 
+of attack on your own, and then discussing it with your instructor 
+before diving in. 
+
+### User-defined color schemes
+
+The `display` module of this project chooses colors randomly. Often 
+they are ugly, and they never convey semantic information. You could 
+make color choices based on a separate _style sheet_, which could be 
+a dictionary with the same hierarchical structure as the data.  This 
+would be particularly useful if you wanted to use a consistent color 
+scheme for two treemaps to compare the distribution of values at one 
+time with the distribution of values in the same categories at a 
+different time.
+
+### Comparable treemaps
+
+If you want to compare treemaps of related data, you might also want 
+to account for difference in total area and grouping.  Suppose, for 
+example, we wanted to compare the distribution of student majors 
+between different academic terms. Total enrollment between those 
+terms might be different, so we might want to scale one of the 
+overall dimensions (height or width of the treemap as a whole) 
+accordingly.  We might also want to record the `bisect` decisions in 
+one run and replay them in another, for consistent grouping. 
+
+### Appropriate use of treemaps and other displays
+
+Here is an open-ended mission for a student with a strong interest 
+in data visualization and a willingness to study human perception. 
+
+You can find many data analysis tools that offer treemap displays.  
+If you read their documentation, you will find much of it devoted to 
+warning against using treemaps inappropriately.  For example, 
+a simple bar graph is much better than a treemap for making precise 
+comparisons.  Consider how hard it is to see that vanilla and 
+chocolate have the same area in the `tiny_categorical.json` data set: 
+
+![Chocolate and vanilla are both 10](
+img/tiny_categorical.svg)
+
+On the other hand, treemaps can be useful for quickly grasping 
+quantitative part/whole relationships, like seeing that the biomass 
+of eukaryotes as a group are a very large fraction of the biomass of 
+the oceans, or students majoring in the natural sciences outnumber 
+students majoring in the social sciences in a computing course, but 
+are a smaller overall portion of the class than computing-related 
+majors (CS, DSCI, MACS, and CIS).
+
+Consider some specific _use_ for which a treemap could be 
+used, and consider the perceptual and cognitive processing 
+that task requires.  Critique the strengths and weaknesses of 
+treemap visualization for _that specific use_.  Can you identify a 
+way to ameliorate a weakness or enhance a strength?  Do not rely on 
+introspection or speculation.  Also, don't accept advice found in 
+documentation uncritically. There 
+is a rich scientific literature 
+on human perception and human computer interaction to draw on. 
+
 
 
 

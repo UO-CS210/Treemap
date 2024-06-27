@@ -20,9 +20,11 @@ SVG_PROLOG = """"
     text {  text-anchor: middle;  
             font-family: Helvetica, Arial, sans-serif;
             font-size: 12pt;
+            white-space: pre-wrap; 
     }
-    .tile_label_white { fill: white; }
-    .tile_label_black { fill: black;  }
+    tspan { white-space: pre-wrap; }
+    .tile_label_white { fill: white;  white-space: pre-wrap; }
+    .tile_label_black { fill: black;   white-space: pre-wrap; }
     .group_outline { stroke: red; fill: white; stroke-width: 1; }
     .group_outline:hover { fill: red; }
    </style>
@@ -88,9 +90,10 @@ def draw_label(label: str, llx: int, lly: int, urx: int, ury: int,
     """Generate display directions for a label in SVG rendering"""
     center_x = (urx + llx) // 2
     center_y = (lly + ury) // 2
+    label = label.replace('\n', f'</tspan><br /><tspan x="{center_x}" dy="1em">')
     SVG_BUFFER.append(
         f"""<text x="{center_x}"  y="{center_y}"
-         class="tile_label_{properties["label_color"]}" > {label} </text>
+         class="tile_label_{properties["label_color"]}" ><tspan>{label}</tspan></text>
       """)
 
 def close():

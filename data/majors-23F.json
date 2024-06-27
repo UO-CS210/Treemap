@@ -1,12 +1,12 @@
 {
    "cas": {
-      "SCDS": {
+      "School of Computer and Data Sciences": {
          "CS": 77,
          "DSCI": 33,
          "MACS": 11,
          "CIS": 2
       },
-      "NatSci": {
+      "Natural Sciences": {
          "PSY": 8,
          "PHYS": 5,
          "MSCI": 4,
@@ -16,18 +16,18 @@
          "MARB": 1,
          "ESCI": 1
       },
-      "SocSci": {
+      "Social Sciences": {
          "PS": 3,
          "LING": 2,
          "EC": 2,
          "SDSC": 1
       },
-      "Hum": {
+      "Humanities": {
          "JPN": 1,
          "ENG": 1
       }
    },
-   "EXPL": 15,
+   "EXPL (Undeclared)": 15,
    "Business": {
       "PBA": 10,
       "BADM": 5,
