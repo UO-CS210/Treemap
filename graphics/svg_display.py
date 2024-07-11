@@ -66,6 +66,7 @@ def draw_rect(llx, lly, urx, ury, properties: dict):
          class="{css_class}"/>
       """)
 
+
 def begin_group(label: str | None,
                     llx: int, lly: int, urx: int, ury: int,
                     properties: dict):
@@ -97,7 +98,7 @@ def draw_label(label: str, llx: int, lly: int, urx: int, ury: int,
       """)
 
 def close():
-    log.info("Writing SVG file")
+    log.info(f"Saving SVG representation as {SVG_OUT.name}")
     SVG_BUFFER.append("</svg>")
     SVG_OUT.write("".join(SVG_BUFFER))
     SVG_OUT.close()

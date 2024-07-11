@@ -6,13 +6,11 @@ import graphics.tk_display as tk
 import graphics.svg_display as svg
 import geometry
 import color_contrast
-from typing import Optional
-import io
 
 import logging
 logging.basicConfig()
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 
 
 def init(width: int, height: int, svg_path: str = None):
@@ -67,6 +65,8 @@ def draw_tile(r: geometry.Rect, label: str | None = None):
     """
     log.debug(f"Drawing {r}")
     properties = {"margin": 4, "class": "tile"}
+    if label:
+        properties["label"] = label
     fill_color, label_color = color_contrast.next_color()
     set_tile_color(properties)
     tk.draw_rect(r.ll.x, r.ll.y, r.ur.x, r.ur.y, properties)

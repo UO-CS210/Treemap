@@ -3,21 +3,31 @@ Author: _Your name here_
 Credits: _Did you collaborate with other students or find useful materials online?
          _Did you use AI tools to create some starter code?
 
-Instructions:  Copy this file to treemap.md and then edit it. REMOVE this part of the
+Instructions:  Copy this file to treemap.py and then edit it. REMOVE this part of the
 docstring and complete the identifying information above.  Credits should start out
-empty, but add to them as you proceed.
+empty, but add classmates or outside sources (including web sources or AI helpers)
+as appropriate.  Be certain you understand it well enough to recreate it without help.
+
+Example use:  python3 mapper.py data/small_flat.json 500 500
 """
 
 # Standard Python library modules
 import json
 import argparse
+import logging
 
 # Project modules, provided
 import geometry
 import display
 
-# Project modules, you write
-import splitter
+# Project modules that you write
+# import splitter  # Uncomment this when you have created splitter.py
+
+# Enable logging with log.debug(msg), log.info(msg), etc.
+logging.basicConfig()
+log = logging.getLogger(__name__)  # Log messages will look like "DEBUG:mapper:msg"
+log.setLevel(logging.DEBUG)   # Change to logging.INFO to suppress debugging messages
+
 
 def cli() -> object:
     """Obtain input file and options from the command line.
@@ -36,17 +46,19 @@ def cli() -> object:
     return args
 
 
-def layout(li: list[int], rect: geometry.Rect):
-    """Lay elements of li out in rectangle.
+def layout(items: list[int], rect: geometry.Rect):
+    """Lay elements of nest out in rectangle.
     Version 0 (skeleton code) just takes a slice off the canvas for
     each rectangle.  You will replace it with much better recursive
     layouts.
     """
-    while len(li) > 0:
-        proportion = li[0] / sum(li)
+    while len(items) > 0:
+        log.debug(f"Laying out {items} in {rect}")
+        proportion = items[0] / sum(items)
         left_rect, rect = rect.split(proportion)
-        display.draw_tile(left_rect, li[0])
-        li = li[1:]
+        label = str(items[0])
+        display.draw_tile(left_rect, label)
+        items = items[1:]
 
 
 def main():
