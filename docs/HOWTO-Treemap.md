@@ -548,10 +548,12 @@ by making a copy of `mapper-skel.py` in a new file `mapper.py`.
 This program should "work" in the sense that it can produce a (very 
 bad) treemap by simply slicing off one rectangle for each data 
 element in a list.  Try it: 
+
 ```commandline
 > python3 mapper.py data/medium_flat.json 500 500
 ```
 You should see a tiling that is dominated by skinny rectangles: 
+
 ![Output of skeleton program](img/skel_output.svg)
 
 This diagram is drawn as the program runs and also saved in SVG 
