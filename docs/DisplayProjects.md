@@ -8,6 +8,41 @@ want to tackle one of them, I suggest first trying to devise a plan
 of attack on your own, and then discussing it with your instructor 
 before diving in. 
 
+## Custom text formatting
+
+Sometimes the label for a rectangle does not fit cleanly within that 
+area.  You can see the ugly effects by making a treemap 
+visualization of `data/Chap08.json`:  Text extends outside the boxes,
+and even overlaps.  There are several tactics we might use to 
+improve text display: 
+
+- We could suppress the text (not print it) when it is too long.
+- We could break it into multiple lines. 
+- We could truncate it in some way that maintains enough to 
+  distinguish one label from another.  For example,
+  `directory-tree-vertical.png` might be shortened to
+  `dir...cal.png` (preserving the beginning, end, and file
+  extension).
+
+The best approach depends on the content of the data.  For example, 
+a shortening scheme that preserves file extensions only makes sense 
+if the labels are file names. Instead of a fixed scheme for fitting 
+text, what we really need is a _custom_ shortening scheme suited to 
+a particular kind of data.  
+
+Editing `mapper.py` for each data set is a poor solution. We want a 
+version of the `layout` function (and the functions it calls) to be 
+fixed even as the text formatting is customized.  In Python, one way 
+to accomplish this is to pass a function as an argument to another 
+function.  We can add a custom text formatting function as a new 
+argument to the `layout` function. 
+
+While we have been running `mapper.py` as a main program, it is 
+designed to be used also as a module that can be imported into 
+another main program.  This is where we could define a more 
+customized text layout function, such as one specifically for 
+shortening long file names. 
+
 ## User-defined color schemes
 
 The `display` module of this project chooses colors randomly. Often 
