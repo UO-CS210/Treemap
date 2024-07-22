@@ -7,7 +7,7 @@ Treemap is a student project an introductory computer science course
 other Oregon public universities). This is a two part project that 
 could be tackled in a single week or 
 spread over two weeks, depending on how much facility students have 
-acquired with writing and testing Python programs.
+acquired with writing and testing Python programs.  
 
 ## Learning objectives
 
@@ -16,6 +16,12 @@ acquired with writing and testing Python programs.
       decomposition
 - List indexing and slicing (part 1)
 - Recursively structured data (nested dictionaries) in part 2
+  - including recursive type annotations in Python
+
+Also 
+
+- Software engineering
+  - Incremental development, with automated testing
 
 ## About treemaps
 

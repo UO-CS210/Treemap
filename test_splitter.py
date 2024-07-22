@@ -20,6 +20,21 @@ class Tests(unittest.TestCase):
         parts = bisect(li)
         self.assertEqual(parts, ([42], [42]))
 
+    def test_pair_skewed_right(self):
+        li = [1, 2]
+        parts = bisect(li)
+        self.assertEqual(parts, ([1], [2]))
+        li = [1,10]
+        parts = bisect(li)
+        self.assertEqual(parts, ([1], [10]))
+
+    def test_pair_skewed_left(self):
+        li = [2,1]
+        parts = bisect(li)
+        self.assertEqual(parts, ([2], [1]))
+        parts = bisect(li)
+        self.assertEqual(parts, ([10], [1]))
+
     def test_simple_units(self):
         li = [1, 1, 1, 1, 1, 1]
         left, right = bisect(li)
