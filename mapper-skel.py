@@ -21,13 +21,16 @@ import geometry
 import display
 
 # Project modules that you write
-# import splitter  # Uncomment this when you have created splitter.py
+# import mapper_types  # We'll create this along with splitter.py
+# import splitter      # Uncomment this when you have created splitter.py
 
 # Enable logging with log.debug(msg), log.info(msg), etc.
 logging.basicConfig()
 log = logging.getLogger(__name__)  # Log messages will look like "DEBUG:mapper:msg"
 log.setLevel(logging.DEBUG)   # Change to logging.INFO to suppress debugging messages
 
+# Layout works with integers, floating point numbers, or a mix of the two.
+Real = int | float    # Named type for use in type annotations
 
 def cli() -> object:
     """Obtain input file and options from the command line.
@@ -46,7 +49,8 @@ def cli() -> object:
     return args
 
 
-def layout(items: list[int], rect: geometry.Rect):
+
+def layout(items: list[Real], rect: geometry.Rect):
     """Lay elements of nest out in rectangle.
     Version 0 (skeleton code) just takes a slice off the canvas for
     each rectangle.  You will replace it with much better recursive
