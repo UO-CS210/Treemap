@@ -7,6 +7,14 @@ to indicate hierarchical structure.  We will focus
 initially on _tiling_ in part 1, then turn attention to _grouping_
 in part 2 of this project. 
 
+> [!TIP]
+> Treemaps are inherently visual. Instructors should offer an 
+> alternative to visually impaired students.  The first phase of
+> this project (recursively dividing a flat list) is not inherently
+> visual. In the second part, you may wish to produce an HTML
+> list structure with the "tree view pattern" in place of the
+> graphical depiction. 
+
 # Part 1: Tiling 
 
 ## Divide and conquer
@@ -16,12 +24,18 @@ built on recursively subdividing a collection of values while also
 subdividing the space to be tiled. For example, given the values
 `[3, 9, 2, 4, 8]`, we might produce the diagram 
 
-![Treemap of \[3, 9, 2, 4, 8\]](img/step-4.svg)
+![Treemap of \[3, 9, 2, 4, 8\].
+Each integer is represented by a rectangle of
+corresponding size: 3 above 9, then 2 and 4 above 8.
+](img/step-4.svg)
 
 The layout corresponds to a 
 _tree_ of values. 
 
-![Tree of values](img/tree.svg)
+![Tree of values.
+The root of the tree is 26, with children 12 above leaves 3 and 9,
+14 above leaf 8 and 6, which is above leaves 2 and 4.
+](img/tree.svg)
 
 In the tree diagram, we can see the values to be tiled as leaves of 
 the tree (represented as rectangles) with the individual values 3, 9,
@@ -35,7 +49,14 @@ values. The tile or group of tiles represented by each node is
 drawn in a size proportional to the value in the tree node 
 representing that tile or group.  
 
-![Tree nodes represent areas](img/tree-is-groups.svg)
+![Tree nodes represent areas.
+Leaf nodes 3, 9, 2, 4, 8 are represented by
+individual tiles.  The main rectangle is divided
+into a part with tiles 3 and 9 (grouped under node 12 in the tree),
+and the remainder with 
+tiles 2, 4, and 8 is further divided into a rectangle containing 2 
+and 4, and the remaining rectangle for 8.
+](img/tree-is-groups.svg)
 
 ### Squarer is better
 
@@ -43,24 +64,34 @@ There are many ways we could divide a rectangle into tiles.  For
 example, we could simply slice it up either vertically or 
 horizontally. 
 
-![Tiling by slicing horizontally](img/slice-horizontally.png)
+![Tiling by slicing horizontally.
+Tall skinny rectangles in a row
+representing 3, 9, 2, 4, 8. 
+](img/slice-horizontally.png)
 
 If we always slice the same way, we get long skinny tiles.  With a 
 larger number of tiles, this becomes less and less useful. 
 
-![Lots of tiles in one dimension](img/slice-lots-horizontally.png)
+![Lots of tiles in one dimension.
+Many tall, very skinny rectangles in a single row.
+](img/slice-lots-horizontally.png)
 
 Slicing either horizontally or vertically can provide an aspect 
 ratio (ratio of height to width) closer to 1.0, but is still not good. 
 
-![Lots of tiles combining vertical and horizontal](img/slice-lots-alternating.png)
+![Lots of tiles combining vertical and horizontal.
+Many long skinny rectangles, some horizontal and some vertical.
+](img/slice-lots-alternating.png)
 
 To do better, we need to divide the list of values into
 better subgroups.  To "squarify" the tiles, we can repeatedly
 subdivide the collection of values into groups that are as close as 
 possible to equal in total. 
 
-![Squarified treemap](img/squarify-lots.png)
+![Squarified treemap.
+The same individual values grouped into sub-rectangles so that
+each tile and each group is closer to square.
+](img/squarify-lots.png)
 
 ### Balanced splits
 
@@ -96,12 +127,17 @@ canvas, we again bisect it, in the only way possible as `[3]` and
 `[9]`.  The 346 by 750 region of the canvas is divided proportionally,
 producing a 346 by 187 rectangle for `[3]`
 
-![The first element is placed in a 346 by 187 rectangle](img/step-1-layout.png)
+![The first element is placed in a 346 by 187 rectangle
+in the bottom left corner.  The outer rectangle has been
+divided into left and right, and the left part has been
+divided into top and bottom. 
+](img/step-1-layout.png)
 
 Similarly, `[9]` is placed in a 346 by 563 rectangle in the remaining 
 part of the 346 by 750 region. 
 
-![The second element is placed in a 346 by 563 rectangle](img/step-2-layout.png)
+![The second element is placed in a 346 by 563 rectangle.
+](img/step-2-layout.png)
 
 It remains to lay out `[2, 4, 8]` in the right side of the canvas.  
 We bisect `[2, 4, 8]` into `[2, 4]` and `[8]`, (totals 6 and 8) and 
@@ -115,7 +151,10 @@ they are taller than they are wide, and horizontally otherwise.)
 This leaves just `[8]`, which is placed in the remaining portion of 
 the canvas. 
 
-![Final layout with 8 in the top right corner.](img/step-4-layout.png)
+![Final layout with 8 in the top right corner.
+9 and 3 are on the left in a column.  The right column
+is divided into 8 above, 2 and 4 in a row below. 
+](img/step-4-layout.png)
 
 ### Getting a start
 
@@ -165,12 +204,11 @@ into a rectangle `left_rect` with area 6, corresponding to the sum
 the list `left`, and a rectangle `right_rect`, corresponding to the 
 sum of list `right` (the remainder of the original list `items`). 
 
-### Create the list splitting module
+### Divide into balanced sublists
 
 You will need to write a bisection function that 
 takes a list of two or more positive integers and returns two sublists
-which together comprise the original list.  We will put it in its own
-source file. 
+which together comprise the original list. 
 
 Start with a skeleton that enables logging and the `doctest` module 
 for including test cases in function docstrings.  Save this in a 
