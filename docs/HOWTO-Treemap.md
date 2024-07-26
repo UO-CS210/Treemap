@@ -7,6 +7,14 @@ to indicate hierarchical structure.  We will focus
 initially on _tiling_ in part 1, then turn attention to _grouping_
 in part 2 of this project. 
 
+> [!TIP]
+> Treemaps are a visual presentation. Part 1 of this project 
+> does not depend on vision.  Instructors 
+> should offer an alternative to visually impaired students for 
+> part 2. I suggest constructing an HTML
+> list structure with the "tree view pattern" in place of the
+> graphical depiction.   [Further construction notes TBD.]
+
 # Part 1: Tiling 
 
 ## Divide and conquer
@@ -16,12 +24,18 @@ built on recursively subdividing a collection of values while also
 subdividing the space to be tiled. For example, given the values
 `[3, 9, 2, 4, 8]`, we might produce the diagram 
 
-![Treemap of \[3, 9, 2, 4, 8\]](img/step-4.svg)
+![Treemap of \[3, 9, 2, 4, 8\].
+Each integer is represented by a rectangle of
+corresponding size: 3 above 9, then 2 and 4 above 8.
+](img/step-4.svg)
 
 The layout corresponds to a 
 _tree_ of values. 
 
-![Tree of values](img/tree.svg)
+![Tree of values.
+The root of the tree is 26, with children 12 above leaves 3 and 9,
+14 above leaf 8 and 6, which is above leaves 2 and 4.
+](img/tree.svg)
 
 In the tree diagram, we can see the values to be tiled as leaves of 
 the tree (represented as rectangles) with the individual values 3, 9,
@@ -35,7 +49,14 @@ values. The tile or group of tiles represented by each node is
 drawn in a size proportional to the value in the tree node 
 representing that tile or group.  
 
-![Tree nodes represent areas](img/tree-is-groups.svg)
+![Tree nodes represent areas.
+Leaf nodes 3, 9, 2, 4, 8 are represented by
+individual tiles.  The main rectangle is divided
+into a part with tiles 3 and 9 (grouped under node 12 in the tree),
+and the remainder with 
+tiles 2, 4, and 8 is further divided into a rectangle containing 2 
+and 4, and the remaining rectangle for 8.
+](img/tree-is-groups.svg)
 
 ### Squarer is better
 
@@ -43,24 +64,34 @@ There are many ways we could divide a rectangle into tiles.  For
 example, we could simply slice it up either vertically or 
 horizontally. 
 
-![Tiling by slicing horizontally](img/slice-horizontally.png)
+![Tiling by slicing horizontally.
+Tall skinny rectangles in a row
+representing 3, 9, 2, 4, 8. 
+](img/slice-horizontally.png)
 
 If we always slice the same way, we get long skinny tiles.  With a 
 larger number of tiles, this becomes less and less useful. 
 
-![Lots of tiles in one dimension](img/slice-lots-horizontally.png)
+![Lots of tiles in one dimension.
+Many tall, very skinny rectangles in a single row.
+](img/slice-lots-horizontally.png)
 
 Slicing either horizontally or vertically can provide an aspect 
 ratio (ratio of height to width) closer to 1.0, but is still not good. 
 
-![Lots of tiles combining vertical and horizontal](img/slice-lots-alternating.png)
+![Lots of tiles combining vertical and horizontal.
+Many long skinny rectangles, some horizontal and some vertical.
+](img/slice-lots-alternating.png)
 
 To do better, we need to divide the list of values into
 better subgroups.  To "squarify" the tiles, we can repeatedly
 subdivide the collection of values into groups that are as close as 
 possible to equal in total. 
 
-![Squarified treemap](img/squarify-lots.png)
+![Squarified treemap.
+The same individual values grouped into sub-rectangles so that
+each tile and each group is closer to square.
+](img/squarify-lots.png)
 
 ### Balanced splits
 
@@ -96,12 +127,17 @@ canvas, we again bisect it, in the only way possible as `[3]` and
 `[9]`.  The 346 by 750 region of the canvas is divided proportionally,
 producing a 346 by 187 rectangle for `[3]`
 
-![The first element is placed in a 346 by 187 rectangle](img/step-1-layout.png)
+![The first element is placed in a 346 by 187 rectangle
+in the bottom left corner.  The outer rectangle has been
+divided into left and right, and the left part has been
+divided into top and bottom. 
+](img/step-1-layout.png)
 
 Similarly, `[9]` is placed in a 346 by 563 rectangle in the remaining 
 part of the 346 by 750 region. 
 
-![The second element is placed in a 346 by 563 rectangle](img/step-2-layout.png)
+![The second element is placed in a 346 by 563 rectangle.
+](img/step-2-layout.png)
 
 It remains to lay out `[2, 4, 8]` in the right side of the canvas.  
 We bisect `[2, 4, 8]` into `[2, 4]` and `[8]`, (totals 6 and 8) and 
@@ -115,7 +151,10 @@ they are taller than they are wide, and horizontally otherwise.)
 This leaves just `[8]`, which is placed in the remaining portion of 
 the canvas. 
 
-![Final layout with 8 in the top right corner.](img/step-4-layout.png)
+![Final layout with 8 in the top right corner.
+9 and 3 are on the left in a column.  The right column
+is divided into 8 above, 2 and 4 in a row below. 
+](img/step-4-layout.png)
 
 ### Getting a start
 
@@ -137,7 +176,61 @@ rectangles and their display on screen. It will be up to you to
 decompose a list of values and direct the corresponding 
 decomposition of a rectangular canvas.  
 
-### Geometry
+### Starting files
+
+I have provided a `treemap.py` main program.  It imports `mapper`,
+which you should create by copying or renaming
+`mapper-skel.py` to `mapper.py`.   
+
+Your additions will be in `mapper.py`.   Let's begin by reviewing
+the starter code. 
+
+#### Logging 
+
+After the header comment, which you should fill in, `mapper.py` 
+imports the `logging` module.  This module is initialized with 
+
+```python
+logging.basicConfig()
+log = logging.getLogger(__name__)  
+log.setLevel(logging.DEBUG)   
+```
+
+This 
+lets you write "log" messages in your code to help with debugging.  
+Log messages are similar to print statements, but they have two 
+important advantages.   First, you can suppress their output by 
+changing the log "level".  Initially we have configured the logging 
+package to print anything in a `log.debug("your message here")` 
+statement.   Later, when you have successfully debugged this module, 
+you don't have to remove or "comment out" those statements.  You can 
+just change the level with `log.setLevel(logging.INFO)` to suppress
+output from calls to`log.debug()`.  The second advantage of logging
+is that the printed output comes with some extra identifying 
+information.  For example, here is some log output from my 
+implementation: 
+
+```text
+DEBUG:mapper:[1]|[2, 1]
+DEBUG:mapper:(Exclude item at split)
+```
+
+Initially this may not seem like much of an advantage.  Why would 
+you need to know that the log message came from `mapper.py`?  As 
+you progress farther in programming, building programs composed of 
+many source code files working together, the identifying information 
+becomes essential. 
+
+We also import that `doctest` module, which allows us to include 
+test cases in function docstrings.  We will make use of that shortly.
+Because it becomes unwieldy to include more than a few test cases in 
+docstrings, I have also provided some separate test modules 
+including `test_splitter.py`. 
+
+Next we see imports of two modules that I have provided for this 
+project.
+
+#### Geometry
 
 I have provided a module `geometry.py` with `Point` and `Rect` 
 (rectangle) classes.  A rectangle is defined by its lower left and 
@@ -165,75 +258,52 @@ into a rectangle `left_rect` with area 6, corresponding to the sum
 the list `left`, and a rectangle `right_rect`, corresponding to the 
 sum of list `right` (the remainder of the original list `items`). 
 
-### Create the list splitting module
+#### Describing a _disjunctive_ type
 
-You will need to write a bisection function that 
-takes a list of two or more positive integers and returns two sublists
-which together comprise the original list.  We will put it in its own
-source file. 
-
-Start with a skeleton that enables logging and the `doctest` module 
-for including test cases in function docstrings.  Save this in a 
-file `splitter.py`:
+We can build treemaps using integers or floating point numbers, or 
+even a mix of the two.  How can we write type annotations for 
+functions that can take a list of `float`, a list of `int`, or a 
+list that mixes the two?  Python allows us to create a new type that 
+is the _disjunction_ ("or")  of `float` and `int`.  
 
 ```python
-"""Split a list nest of at least two positive integers into two balanced parts,
-prefix and suffix, such that prefix+suffix == nest and
-abs(sum(prefix) - sum(suffix)) is minimized.
+Real = int | float   
+```
+We pronounce the vertical bar "or", and I would pronounce the 
+statement as "a Real is an int or a float".   We use this 
+disjunctive type `Real` in the header for the `treemap` function:
 
-# Your instructor may ask you to identify yourself here
-"""
-
-import doctest
-
-import logging
-logging.basicConfig()
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
-
-#  Your bisection function will go here. 
-
-if __name__ == "__main__":
-    doctest.testmod()
+```python
+def treemap(values: list[Real], width: int, height: int):
+    """Create treemap of values in width x height pixel display
+    in Tk interface and in SVG file written to treemap.svg.
+    """
 ```
 
-Importing `doctest` allows you to write test cases as part of
-your function docstring.  The bit at the end
-(`if __name__ == "__main__"`) runs the test cases when you
-execute your `splitter.py` directly, but not when you import it
-for use in another Python module like the `mapper.py` that we will
-build shortly. 
+#### `treemap` and `layout`
 
-The part from `import logging` through `log.setLevel(logging.DEBUG)` 
-lets you write "log" messages in your code to help with debugging.  
-Log messages are similar to print statements, but they have two 
-important advantages.   First, you can suppress their output by 
-changing the log "level".  Initially we have configured the logging 
-package to print anything in a `log.debug("your message here")` 
-statement.   Later, when you have successfully debugged this module, 
-you don't have to remove or "comment out" those statements.  You can 
-just change the level with `log.setLevel(logging.INFO)` to suppress
-output from calls to`log.debug()`.  The second advantage of logging
-is that the printed output comes with some extra identifying 
-information.  For example, here is some log output from my 
-implementation: 
+The main work of laying out the tree map display is in function 
+`layout`.  The provided version of `layout` uses a simple loop, but 
+soon you will create a recursive version that passes a `rect` 
+(rectangular region) argument.  The `treemap` function starts it 
+with the whole list of values to be displayed and the whole display 
+area as the rectangular region to display them in. 
 
-```text
-DEBUG:splitter:[1]|[2, 1]
-DEBUG:splitter:(Exclude item at split)
-```
+This initial version of `layout` should already "work" in the sense 
+that it will draw a rectangle for each value in the input list, but 
+the simple loop produces a very poor layout. To do better, we need 
+to recursively divide lists into approximately balanced sublists. 
 
-Initially this may not seem like much of an advantage.  Why would 
-you need to know that the log message came from `splitter.py`?  As 
-you progress farther in programming, building programs composed of 
-many source code files working together, the identifying information 
-becomes essential. 
+### Dividing into balanced sublists
 
-Now you should add the header of the `bisect` function, including 
+You will need to write a function that 
+takes a list of two or more positive numbers and returns two sublists
+which together comprise the original list.   Add the header of the 
+`bisect` function, including 
 test cases, with a dummy body. 
 
 ```python
-def bisect(li: list[int]) -> tuple[list[int], list[int]]:
+def bisect(li: list[Real]) -> tuple[list[Real], list[Real]]:
     """Returns (prefix, suffix) such that prefix+suffix == nest
     and abs(sum(prefix) - sum(suffix)) is minimal.
     Breaks tie in favor of earlier split, e.g., bisect([1,5,1]) == ([1], [5, 1]).
@@ -241,8 +311,10 @@ def bisect(li: list[int]) -> tuple[list[int], list[int]]:
 
     >>> bisect([1, 1, 2])  # Perfect balance
     ([1, 1], [2])
-    >>> bisect([2, 1, 1])  # Perfect balance
-    ([2], [1, 1])
+    >>> bisect([1.5, 1.5, 3.0])  # Similar, works with floats
+    ([1.5, 1.5], [3.0])
+    >>> bisect([2.0, 1, 1.0])  # Perfect balance, mixed
+    ([2.0], [1, 1.0])
     >>> bisect([1, 2, 1])  # Equally bad either way; split before pivot
     ([1], [2, 1])
     >>> bisect([6, 5, 4, 3, 2, 1])  # Must include element at split
@@ -257,17 +329,18 @@ def bisect(li: list[int]) -> tuple[list[int], list[int]]:
 
 There are several things to notice about this function header: 
 - It specifies that `bisect` takes one argument, which should be
-  a list of integers.  The Python interpreter will not check this,
+  a list of numbers (`int`, `float`, or a mix).  The Python interpreter 
+  will not check this,
   unfortunately, but you may be using other tools such as 
   an interactive development environment (IDE)
   like VS Code or PyCharm that provides type annotation checking.
-- It specifies that `bisect` will return _two_ lis in a
+- It specifies that `bisect` will return _two_ lists in a
   tuple.  This is a handy feature of Python ... we can write
   `return a, b` to return the values of `a` and `b` together in a 
   tuple. 
 - The type annotations do not specify that the input list must
   have at least two elements, and that all of them must be
-  _positive_ integers, or that the result should be two parts of the
+  _positive_ numbers, or that the result should be two parts of the
   original list in the same order, with balanced sums.  Type 
   annotations are not powerful enough to specify these _semantic_ 
   properties, so they are instead stated succinctly in the docstring 
@@ -310,17 +383,17 @@ Got:
 ... lots more like that 
 **********************************************************************
 1 items had failures:
-   5 of   5 in __main__.bisect
-***Test Failed*** 5 failures.
+   6 of   6 in __main__.bisect
+***Test Failed*** 6 failures.
 ```
 
 That's fine! It's what we expected!  
 
 On the other hand, if your output looks like this:
 ```doctest
-  File "/Users/michal/Dropbox/23F-210/projects/Treemap/splitter.py", line 14
-    def bisect(li: list[int]) -> tuple[list[int, list[int]]:
-                                      ^
+   File "/your/path/here/Treemap/mapper.py", line 32
+    def bisect(li: list[Real]) -> tuple[list[Real, list[Real]]:
+                                       ^
 SyntaxError: '[' was never closed
 ```
 or like this: 
@@ -346,7 +419,7 @@ move on to the next step.
 
 ### Finding our balance
 
-How can we divide a list of positive integers in a balanced way, 
+How can we divide a list of positive numbers in a balanced way, 
 considering the _sums_ of the two parts rather than their _length_?
 We can find the smallest index _i_ such that `sum(li[:i+1])` is 
 greater than half the sum of the whole list `li`.  
@@ -360,7 +433,8 @@ Can we be sure that such an _i_ will always exist?
 Provided all the 
 elements of `li` are positive and `len(li) > 1`, we can be sure 
 that `sum(li) > sum(li)/2`.  Since `li[:len(li)+1]` is the same as 
-`li`, we know that there is some _i_ in `range(len(i))` such that `sum(li[:i+1])` is 
+`li`, we know that there is some _i_ in `range(len(i))`
+such that `sum(li[:i+1])` is 
 greater than half the sum of the whole list.  We just need to find
 the _smallest_ such _i_, which we can do by looping through the 
 indexes of `li`. 
@@ -395,7 +469,7 @@ PyDev console: starting.
 ```
 
 When we execute our program, some of our doctests will succeed, but 
-one will fail: 
+some will fail: 
 
 ```pycon
 Failed example:
@@ -411,6 +485,9 @@ another that sums to 10 is better than splitting into 6 and 15.  It
 appears that we must add a check in our function to determine 
 whether `li[i]` should be included or excluded from the first part.
 
+![[6, 5] is closer to the ideal 10.5 than [6]](
+img/split-include-break.svg)
+
 We can make the needed adjustment with a few lines of code.  There 
 are two possibilities.  We could split `li` into `li[:i]` and 
 `li[i:]` (excluding `li[i]` from the first part and including it in 
@@ -418,7 +495,24 @@ the second), or we could split into `li[:i+1]` and `li[i+1:]`,
 placing item `i` in the first part.  We want the first part to come 
 as close to half the sum of `li` as possible, which we can determine
 by subtracting each sum from `sum(li)/2` and comparing the absolute 
-value of the differences.   I leave that to you. 
+value of the differences.   
+
+I leave the design of a test to include or exclude `li[i]` to you.  
+Making it simple and readable is a challenge.  After first plugging 
+over-complicated (and incorrect) code directly into `bisect`, I 
+found the following tactics useful to simplify it and get it right: 
+- Begin by computing a _target_ sum, which is half the sum of the 
+  whole list.  The closer the first part of the split is to this 
+  target, the better.  This is simpler than checking the difference 
+  between the sum of the first part and the sum of the second part. 
+- Simplify the code in `bisect` by factoring out the part that 
+  determines how far a possible split is from the target.  I made a 
+  function `badness` that computed the absolute value of the 
+  difference between a target value and the sum of elements in a list. 
+
+The body of my `badness` function is only one line of code, but 
+using it was enough to make my `bisect` code transparent and to get 
+it right. 
 
 ### Too slow! 
 
@@ -433,6 +527,16 @@ def sum(li: list[int]) -> int:
         total = total + li[i]
     return total
 ```
+
+> [TIP]
+> When we reason about efficiency, we need to consider
+> not just loops in our own code, but 
+> also "invisible loops" in functions and operations we use.  
+> Usually we can count on library functions and operations to use 
+> efficient algorithms, so we reason about what they _must_ do to 
+> accomplish their function.  For example, we know that `sum` _must_ 
+> access each element of a list, so it must take _at least_ time 
+> proportional to the length of the list. 
 
 Consider that this `sum` function is called each time through the 
 loop in our `bisect` function.  How many times is the statement 
@@ -517,7 +621,7 @@ a fraction of a second:
 ```pycon
 Launching unittests with arguments python -m unittest /your_path/test_splitter.py  
 DEBUG:test_splitter:Splitting 50001 items in 0.009398937225341797 seconds
-Ran 9 tests in 0.011s
+Ran 11 tests in 0.012s
 OK
 ```
 
@@ -525,7 +629,7 @@ OK
 
 So far you have created a function `bisect` in a new file
 `splitter.py`.  This function takes a list of at least two
-positive integers.  It returns _two_ results as a tuple.
+positive numbers.  It returns _two_ results as a tuple.
 The first result and the second result together comprise the input 
 list, and their sum is as close as possible to equal. 
 You have created a 
@@ -543,14 +647,10 @@ cases in `test_splitter.py` should also pass.
 ### Laying tile
 
 Now that we can split a list of positive integers into two balanced 
-parts, let's use it over and over to tile a rectangular area.  Start 
-by making a copy of `mapper-skel.py` in a new file `mapper.py`.  
-This program should "work" in the sense that it can produce a (very 
-bad) treemap by simply slicing off one rectangle for each data 
-element in a list.  Try it: 
+parts, let's use it over and over to tile a rectangular area.  
 
 ```commandline
-> python3 mapper.py data/medium_flat.json 500 500
+> python3 treemap.py data/medium_flat.json 500 500
 ```
 You should see a tiling that is dominated by skinny rectangles: 
 
@@ -601,7 +701,7 @@ single value, it takes the whole rectangle:
 
 The recursive case uses the `bisect` function: 
 ```python
-  left, right = splitter.bisect(items)
+  left, right = bisect(items)
 ```
 
 Here I am calling the parts "left" and "right", but they might be 
@@ -626,7 +726,9 @@ function `bisect` in `splitter.py` and a function `layout` in
 above from lists of integers in JSON files like
 `data/medium_flat.json`.   This might be a good time for a 
 little rest, a cup of tea or coffee, a refreshing walk, or
-tackling some reading for another class. 
+tackling some reading for another class.  If you spent more than an 
+hour on part 1, and assuming you started the project early in the 
+week, consider tackling part 2 tomorrow. 
 
 Part 2 will consider richer data sources with hierarchical structure 
 that we wish to preserve in the treemap. 
@@ -668,22 +770,29 @@ recursive case:
   list of integers
 
 For example
--  `42` is a nested list of integers
-- `[12, 3, 18]` is a nested list of integers
-- `[12, [3, 18], [[4, 2], 1]]` is a nested list of integers
+-  `42` is a nested list of numbers.  So is `42.8`.
+- `[12, 3.0, 18]` is a nested list of numbers
+- `[12, [3.0, 18], [[4, 2.0], 1]]` is a nested list of numbers
 
-Recent versions of Python 3 allow us to construct a type annotation 
-for such a recursive structure by introducing a _type variable_: 
+We have already introduced a _disjunctive type_ `Real` to describe 
+values that can be either integers (`int`) or floating point numbers 
+(`float`), and we have used `list[Real]` in type annotations.  We 
+can use the same approach to introduce a name for a recursive 
+structure: 
 
 ```python
-Nest = int | list['Nest']
+Nest = Real | list['Nest']
 ```
-The vertical bar is pronounced "or".
 
-We already have a recursive structure in our `layout` function.  It 
+We must put `Nest` in quotes for `list['Nest']`, 
+because of the way Python process names.  That's annoying, but it is 
+a small price for the ability to concisely describe recursive 
+structures that can be nested to arbitrary depth. 
+
+Our `layout` function is already recursive.  It 
 will require only minor adjustments, which we will get to shortly.
-The main change will be in our `splitter.py` module, which currently 
-has a `bisect` function that is not recursive.  We will need to 
+The main change will be in our `bisect` function that is not recursive.
+We will need to 
 change it so that inner nested lists are treated as single items.
 Instead of looping through items that are individual integers, we 
 will loop through items that might be lists.  
@@ -699,8 +808,8 @@ We will need to add a `deep_sum` function in `splitter.py`, with
 this header: 
 
 ```python
-def deep_sum(nest: Nest) -> int:
-    """Returns the total of all integers in the Nest.
+def deep_sum(nest: Nest) -> Real:
+    """Returns the total of all numbers in the Nest.
 
     >>> deep_sum(12)
     12
@@ -708,24 +817,19 @@ def deep_sum(nest: Nest) -> int:
     35
     >>> deep_sum([[7, 3], [1, [2, 7]], 10])
     30
+    >>> deep_sum([[1.0, 2.0], [3, 4]])
+    10.0
     """
 ```
-Note that we are using the recursive type definition `Nest`, 
-provided just above, as a type annotation for the input argument 
-"nest". Add the type definition just before `deep_sum`. 
-Recursive type definitions are a fairly recent feature of Python 3.
-If you are using 
-an older version of Python 3, you could omit the type annotation for 
-`nest`.
 
 To implement `deep_sum`, use the `isinstance` function to 
-determine whether `nest` is an integer or a list, e.g., 
-`if isinstance(nest, int)`.  The recursive function echoes the 
+determine whether `nest` is a number or a list, e.g., 
+`if isinstance(nest, Real)`.  The recursive function echoes the 
 recursive structure of the data, with the same breakdown of base 
-case (an integer) and recursive case (a list of nested lists).
+case (a number) and recursive case (a list of nested lists).
 
 Be sure to test your implementation by executing
-`splitter.py` before moving on to the next step. 
+`mapper.py` to run doctests before moving on to the next step. 
 
 When `deep_sum` is working correctly, we can modify our `bisect` 
 function to use it.  Let's begin by adding a couple of test cases 
@@ -764,7 +868,7 @@ Failed example:
 Exception raised:
     ...
     total += li[i]
-    TypeError: unsupported operand type(s) for +=: 'int' and 'list'
+    TypeError: unsupported operand type(s) for +=: 'float' and 'list'
 ```
 
 This is because `li[i]` might be a list.  We can repair this by 
@@ -774,8 +878,8 @@ using the deep sum of the element instead:
         total += deep_sum(li[i])
 ```
 
-Recall that the deep sum of an integer is just the value of the 
-integer, so we don't need to check whether `li[i]` is an integer or 
+Recall that the deep sum of a number is just the value of the 
+number, so we don't need to check whether `li[i]` is an number or 
 a list. 
 
 Some calls to `sum` may also need to be replaced by calls to 
@@ -791,8 +895,6 @@ Add the definition of nested lists
 and revise the header of function `layout` in `mapper.py`. 
 
 ```python
-Nest = int | list['Nest']
-
 def layout(nest: Nest, rect: geometry.Rect):
     """Lay elements of nest out in rectangle.
     Recursively lays out a nested list of integers
@@ -807,33 +909,37 @@ with nested lists.   We had the following cases:
 - (_Recursive case_) `items` has two or more elements.
    Bisect the list and the rectangle, and lay out both parts.
 
-The recursive case (bisecting the list and 
-making a recursive call to lay out  each part) remains the same.
-The difference is in the 
+The original recursive case (bisecting the list and 
+making a recursive call to lay out  each part) remains the same. 
+The difference is in the old
 base case, because a nested list of length 1 could contain a single 
-integer or a list of integers.  
+integer.   When we build a recursive function to process a recursive 
+data structure, typically at least the first level of the case 
+breakdown is based on the type of the value we are processing.  
 
-- (_Base case_)  `nest` has only one element. 
-  - That element is an integer. 
+- (_Base case_)  `items` is a number.   
      Draw the tile.
-  - That element is a (nested) list.  Lay out the list. 
-- (_Recursive case_) `nest` has two or more elements.
-   Bisect the list and the rectangle, and lay out both parts.
+- (_Recursive cases_) `items` is a list.
+  - `items` has only one element.
+    Make a recursive call to lay out that element.
+  -  `items` has two or more elements.
+     Bisect the list and the rectangle, and lay out both parts.
 
 There may also be a couple calls to `sum` in `layout` that will need 
-to be replaced by `splitter.deep_sum`.  That's all!   Add the
-definition of type `Nest` to `mapper.py`, make the 
-needed changes, and check your work by attempting to build treemaps 
+to be replaced by `deep_sum`.  That's all!   Make the 
+needed changes and check your work by attempting to build treemaps 
 for `data/small_nested_list.json` (`[3, [9, 2], 4, 8]`)
 and then `data/medium_nested_list.json`
 
 ```commandline
-python3 mapper.py data/small_nested_list.json 400 400
+python3 treemap.py data/small_nested_list.json 400 400
 ```
-![Small nested treemap](img/small_nested_treemap.svg)
+![Small nested treemap.  Left side contains 3, 9, 2.  Right side 
+contains 4, 8.
+](img/small_nested_treemap.svg)
 
 ```commandline
-python3 mapper.py data/medium_nested_list.json 400 400
+python3 treemap.py data/medium_nested_list.json 400 400
 ```
 
 ![Medium nested treemap](img/medium_nested_list.svg)
@@ -842,16 +948,14 @@ python3 mapper.py data/medium_nested_list.json 400 400
 
 So far you should have
 
-- `splitter.py`
-  - a function `deep_sum` that returns a the sum of all the integers 
-    in a nested list of integers, e.g.,
-    `deep_sum([1, [2, 3], 4]) == 10`.
-  - a function `bisect` that returns two parts of a nested list of 
-    integers, e.g.,
-    `splitter.bisect([1, [2, 3], 4]) == ([1, [2, 3]], [4])`.
-  - `mapper.py`
-    - a function `layout` that can create a treemap of a nested list 
-      of integers. 
+- a named type `Real` that is the _disjunction_ of `int` and `float`
+- a named type `Nest` that is a recursive list of `Real`
+- a function `deep_sum` that returns the sum of all the numbers 
+  in a `Nest`, e.g.,
+  `deep_sum([1, [2, 3], 4]) == 10`.
+- a function `bisect` that returns two parts of `Nest`, e.g.,
+  `bisect([1, [2, 3], 4]) == ([1, [2, 3]], [4])`.
+- a function `layout` that can create a treemap of a `Nest`
 
 ### Nested categorical data
 
@@ -881,17 +985,19 @@ function.  We can
 recover a list of pairs from a dictionary 
 `d` as `list(d.items())`.  
 
-_Note: You might wonder why we need `list(d.items())` and not just 
-`d.items()`.  The `items()` method does not return a list!  It 
-returns an `iterable` that walks and talks like a list, and can be 
-used in most ways a real list could be used, but 
-`isinstance(d.items(), list)` will return `False`. We need to convert
-it from a list-like object to a genuine list._
+> [!NOTE]
+> You might wonder why we need `list(d.items())` and not just 
+> `d.items()`.  The `items()` method does not return a list!  It 
+> returns an `iterable` that walks and talks like a list, and can be 
+> used in most ways a real list could be used, but 
+> `isinstance(d.items(), list)` will return `False`. We need to convert
+> it from a list-like object to a genuine list._
 
-Our type `Nest`, which is described both in `mapper.py` and 
-`splitter.py`, now needs options for tuples and dictionaries: 
+Our type `Nest` now needs options for tuples and dictionaries: 
 
-Nest = int | list['Nest'] | dict[ str, 'Nest'] | tuple[str, 'Nest']
+```python
+Nest = Real | list['Nest'] | dict[ str, 'Nest'] | tuple[str, 'Nest']
+```
 
 As when we introduced nested lists, we will need to revise both the 
 `deep_sum` function in `splitter.py` and the `layout` function in 
@@ -899,8 +1005,8 @@ As when we introduced nested lists, we will need to revise both the
 encounter a dictionary, we will simply convert it to a list of pairs. 
 
 ```python
-    if isinstance(li, dict):
-        li = list(li.items())
+    if isinstance(nest, dict):
+        nest = list(nest.items())
 ```
 
 You will need this conversion at the beginning of both `deep_sum` 
@@ -914,7 +1020,7 @@ use an `isinstance` call to determine that an item is a `tuple`,
 then extract the _value_ part for a recursive call: 
 
 ```python
-        label, value = li
+        key, value = nest   # Crashes if len(nest) != 2
         return deep_sum(value)
 ```
 
@@ -924,6 +1030,33 @@ Add a test case to `deep_sum` to check this:
     29
 ```
 
+Just in case, it's a good idea to add a little defensive programming: 
+
+```python
+    else: 
+        assert False, f"Unanticipated type in deep_sum: {nest}"
+```
+
+We can execute the test cases in `mapper.py` before moving on to 
+`bisect`.
+
+```commandline
+python3 mapper.py
+```
+When I did this, it revealed that I had missed one instance of `li` 
+when I renamed that variable to `nest`.
+
+```text
+      File "/Your/path/here/Treemap/mapper.py", line 57, in deep_sum
+        assert False, f"Unanticipated type in deep_sum: {nest}"
+    AssertionError: Unanticipated type in deep_sum: {'Cake': {'Chocolate': 10, 'Carrot': 4}, 'Ice Cream': 15}
+**********************************************************************
+1 items had failures:
+   1 of   5 in __main__.deep_sum
+***Test Failed*** 1 failures.
+```
+
+
 While we want to lay out any kind of `Nest`, `bisect` only makes sense
 for `Nest`s that are `list`s.  We'll add an assertion as a self-check: 
 
@@ -932,28 +1065,31 @@ for `Nest`s that are `list`s.  We'll add an assertion as a self-check:
     assert len(li) >= 2, f"Cannot bisect {li}; length must be at least 2"
 ```
 
-With the functions in `splitter.py` working, we are ready to add 
-the needed functionality to the `layout` function in `mapper.py`.  
+#### Layout with labeled data 
+
+With `deep_sum` and `bisect` working, 
+we are ready to add 
+the needed functionality to the `layout` function.  
 We want to keep the logic of `layout` understandable, which is easiest 
 to do if its logic follows the cases of the `Nest` type: 
 
 ```python
-Nest = int | list['Nest'] | dict[ str, 'Nest'] | tuple[str, 'Nest']
+Nest = Real | list['Nest'] | dict[ str, 'Nest'] | tuple[str, 'Nest']
 ```
 
 It is tempting to start patching extra cases into the code. That 
 quickly becomes long and sufficiently complicated that it is hard to 
-be sure we have gotten it right ... a sure sign we haven't. It's 
+be confident we have gotten it right ... a sure sign we haven't. It's 
 better to take a step back and consider the cases on paper or in a 
 document _other than_ the code. 
 
 We'll enumerate the cases following the definition of `Nest`, 
 without writing code at first: 
 
-- `int`:   Draw a single tile, labeled with the integer.
+- `Real`:   Draw a single tile, labeled with the value.
 - `list[Nest]` : Depends on length of the list.
   - A single item:  Handling depends on whether that single item is 
-    an `int`, a `tuple`, a `dict`, or something else.  We could 
+    an `Real`, a `tuple`, a `dict`, or something else.  We could 
     check for each of these, but let's see if we can avoid it.
   - More than one item:  Subdivide as before with `bisect`
 - `dict[str, 'Nest']` : We'll want to lay out each element with
@@ -975,8 +1111,8 @@ duplication.
   handles `tuple`s. 
 - In the handling of a `tuple` (which will always be a label and a
   value), we will need to distinguish between value that is a single
-  integer, and other kinds of value (usually nested `dict`s).  If it 
-  is a single `int`, we want to label a tile with the `str` part.  
+  number, and other kinds of value (usually nested `dict`s).  If it 
+  is a single `Real`, we want to label a tile with the `str` part.  
   If it is a nested group, we should create a visual representation 
   for that group. 
 
@@ -988,15 +1124,15 @@ to follow the definition of `Nest` in an
 `if`/`elif`/... sequence, ending with a defensive "can't happen" case: 
 
 ```python
-  if isinstance(nest, int):
+  if isinstance(items, Real):
     ...
-  elif isinstance(nest, list):
+  elif isinstance(items, list):
     ... etc
   else: 
-    assert False, f"What have we here? {nest}"
+    assert False, f"What have we here? {items}"
 ```
 
-- `int` :  Draw a single tile, using the value as a label.  You can 
+- `Real` :  Draw a single tile, using the value as a label.  You can 
   reuse previously written code from a list with length 1. 
 - `list` : If the list has a single item, make a recursive call to 
   lay out that item.  Do nothing for an empty list (which would be 
@@ -1005,7 +1141,7 @@ to follow the definition of `Nest` in an
   before. 
 - `dict` : Convert to a list of tuples and make a recursive call.
 - `tuple` : Extract key and value parts, and then
-  - if value is an `int`, draw a single tile labeled with the key 
+  - if value is an `Real`, draw a single tile labeled with the key 
     and value together, e.g.,
     `display.draw_tile(rect, label=f"{key}\n{value}")`.
   - otherwise, treat this tuple as a subgroup (see below).
@@ -1033,16 +1169,16 @@ example, you should be able to create a treemap representation of
 the biomass of kingdoms in the ocean: 
 
 ```python
-{  "viruses": 3,
+{  "viruses": 0.03,
   "prokaryotes": {
-    "bacteria": 150,
-    "archaea": 30
+    "bacteria": 1.5,
+    "archaea": 0.3
   },
   "eukaryotes": {
-    "protists": 200,
-    "animals": 200,
-    "fungi": 30,
-    "plants": 50 }}
+    "protists": 2,
+    "animals": 2,
+    "fungi": 0.3,
+    "plants": 0.5 }}
 ```
 This data set, adapted from Adapted from figure 1 part A, 
 [The Biomass Composition of the Oceans: A Blueprint of Our Blue Planet](
@@ -1055,7 +1191,7 @@ plant biomass is higher).
 Produce the treemap visualization like this: 
 
 ```commandline
-python3 mapper.py data/ocean-biomass.json 600 600
+python3 treemap.py data/ocean-biomass.json 600 600
 ```
 
 ![Surprising balance of biomass in the ocean](
@@ -1067,13 +1203,17 @@ showing that roughly half of the students were in majors within the
 School of Computing and Data Sciences.
 
 ```commandline
-python3 mapper.py data/majors-23F.json 1024 768
+python3 treemap.py data/majors-23F.json 1024 768
 ```
 
-![Declared majors in an intro CS course](img/majors-23F.svg)
+After closing the display window, try dropping `treemap.svg` into a 
+web browser to check the hover effect ("tooltip") in the margins 
+between individual tiles in a group. 
+
+![Declared majors in an intro CS course](img/majors-23F.png)
 
 The completes the treemap project.
-Turn in `splitter.py` and `mapper.py`.  
+Turn in `mapper.py`.  
 
 ## Going farther (optional projects for ambitious students)
 
@@ -1082,6 +1222,37 @@ project. You are welcome to stop here.  But if you would like to
 push this project a little farther, including some considerations 
 that would be part of making a real professional-level software 
 product, here are some ways to proceed. 
+
+### Data in the Wild
+
+There are many publicly available data sets that could be candidates 
+for treemapping, but they are seldom available in the JSON 
+interchange format accepted by our `treemap.py` program.  Often they 
+are available as as tabular data in comma-separated values (CSV) files,
+or can be exported to CSV from a spreadsheet or database. The tabular
+data may have a named column for each item, e.g., 
+
+| Chocolate |  Carrot | Vanilla | Strawberry |
+| ----------|---------|---------|------------|
+| 10        | 4       | 10      | 5          |
+
+or it might use values in columns as labels for
+hierarchical grouping, like the treemap charts in
+Microsoft Excel. 
+
+| Dessert   | Flavor     |          |
+|-----------|------------|----------|
+| Cake      | Chocolate  | 10       |
+| Cake      | Carrot     | 4        |
+| Ice Cream | Vanilla    | 10       |
+| Ice Cream | Strawberry | 5       |
+
+Explore some available data sets and design Python programs to
+convert tabular data into nested JSON structures for
+treemapping.  Can you create some general conversions that
+are applicable to many different available data sets?
+You may wish to use `structure/structure.py`, the program that
+produced `data/majors-23F.json`, as a starting point.
 
 ### [Robust input handling](RobustTreemaps.md)
 
