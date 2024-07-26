@@ -1,5 +1,9 @@
 """Graphical display for treemapper.  Can produce
 SVG file in addition to Tk display.
+
+Note we are using modules (display, tk_display, svg_display) as stateful objects,
+which makes them "singletons".   To allow multiple instances of display would require
+rewrite of all three modules to isolate state in objects managed by other code.
 """
 
 import graphics.tk_display as tk
@@ -13,7 +17,7 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 
-def init(width: int, height: int, svg_path: str = None):
+def init(width: int, height: int):
     tk.init(width, height)
     svg.init(width, height)
 

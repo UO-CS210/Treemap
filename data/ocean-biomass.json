@@ -1,13 +1,10 @@
-{
-  "viruses": 3,
+{  "viruses": 0.03,
   "prokaryotes": {
-    "bacteria": 150,
-    "archaea": 30
+    "bacteria": 1.5,
+    "archaea": 0.3
   },
   "eukaryotes": {
-    "protists": 200,
-    "animals": 200,
-    "fungi": 30,
-    "plants": 50
-  }
-}
+    "protists": 2,
+    "animals": 2,
+    "fungi": 0.3,
+    "plants": 0.5 }}

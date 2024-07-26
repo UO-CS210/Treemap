@@ -2,7 +2,7 @@
 
 import unittest
 import time  # To distinguish linear-time from quadratic time solutions
-from splitter import bisect
+from mapper import bisect
 
 import logging
 logging.basicConfig()
@@ -32,8 +32,9 @@ class Tests(unittest.TestCase):
         li = [2,1]
         parts = bisect(li)
         self.assertEqual(parts, ([2], [1]))
+        li = [10.0, 1.0]
         parts = bisect(li)
-        self.assertEqual(parts, ([10], [1]))
+        self.assertEqual(parts, ([10.0], [1.0]))
 
     def test_simple_units(self):
         li = [1, 1, 1, 1, 1, 1]

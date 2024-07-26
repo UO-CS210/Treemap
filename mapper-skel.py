@@ -12,41 +12,32 @@ Example use:  python3 mapper.py data/small_flat.json 500 500
 """
 
 # Standard Python library modules
-import json
-import argparse
 import logging
+import doctest
 
 # Project modules, provided
 import geometry
 import display
-
-# Project modules that you write
-# import mapper_types  # We'll create this along with splitter.py
-# import splitter      # Uncomment this when you have created splitter.py
 
 # Enable logging with log.debug(msg), log.info(msg), etc.
 logging.basicConfig()
 log = logging.getLogger(__name__)  # Log messages will look like "DEBUG:mapper:msg"
 log.setLevel(logging.DEBUG)   # Change to logging.INFO to suppress debugging messages
 
+
 # Layout works with integers, floating point numbers, or a mix of the two.
 Real = int | float    # Named type for use in type annotations
 
-def cli() -> object:
-    """Obtain input file and options from the command line.
-    Returns an object with a field for each option.
+
+def treemap(values: list[Real], width: int, height: int):
+    """Create treemap of values in width x height pixel display
+    in Tk interface and in SVG file written to treemap.svg.
     """
-    parser = argparse.ArgumentParser("Depict a data set as a squarified treemap")
-    parser.add_argument("input", help="Data input in json format",
-                        type=argparse.FileType("r"))
-    parser.add_argument("width", help="width of canvas in pixels",
-                        type=int)
-    parser.add_argument("height", help="height of canvas in pixels",
-                        type=int)
-    parser.add_argument("svg", help="SVG output file",
-                        nargs="?", default="output.svg")
-    args = parser.parse_args()
-    return args
+    display.init(width, height)
+    area = geometry.Rect(geometry.Point(0, 0),
+                         geometry.Point(width, height))
+    layout(values, area)
+    display.wait_close()
 
 
 
@@ -65,18 +56,8 @@ def layout(items: list[Real], rect: geometry.Rect):
         items = items[1:]
 
 
-def main():
-    """Display and produce an SVG treemap of the input data."""
-    args = cli()
-    display.init(args.width, args.height, args.svg)
-    values = json.load(args.input)
-    area = geometry.Rect(geometry.Point(0, 0),
-                         geometry.Point(args.width, args.height))
-    layout(values, area)
-    display.wait_close()
-
 if __name__ == "__main__":
-    main()
+    doctest.testmod()
 
 
 
