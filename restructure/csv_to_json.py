@@ -23,6 +23,9 @@ Transformation is guided by a configuration file in JSON format, e.g.
   "labels" : ["Program" ,"Level" , "Course"],
   "values" : ["SCH"]
 }
+
+Note "values" columns will be interpreted as numbers (int or float) if they appear to be numeric,
+but "labels" columns will always be treated as strings.
 """
 
 import json
@@ -81,6 +84,29 @@ def insert(values: list[int], path: list[str], structure: dict):
     insert(values, suffix, structure[initial])
 
 
+def coerce_by_guessing(values: list) -> object:
+    """Best guess at interpretation of value fields.
+    If a field contains only digits, we guess it is an integer.
+    If a looks like a floating point number, we coerce it to float.
+    Otherwise we leave it as a string.
+    If the list has only a single item, we unpack it.
+    """
+    def guess_value(field: str) -> object:
+        try:
+            return int(field)
+        except Exception: pass
+        try:
+            return float(field)
+        except Exception: pass
+        return field
+    coerced = [ guess_value(field) for field in values]
+    if len(coerced) == 1:
+        return coerced[0]
+    else:
+        return coerced
+
+
+
 def unflatten(flat: io.IOBase, schema: dict[str, columns]) -> dict:
     """Reshape flat CSV file into tree structure represented as nest of dictionaries.
     Rows that go in the tree are those with content in the data columns.
@@ -103,9 +129,10 @@ def unflatten(flat: io.IOBase, schema: dict[str, columns]) -> dict:
             log.debug(f"Labels effectively {row_labels}")
         value_fields = [record[field] for field in values]
         if value_fields[0]:
+            leaf_value = coerce_by_guessing(value_fields)
             # This row has values to insert
-            log.debug(f"Inserting {row_labels} -> {value_fields}")
-            insert(value_fields, row_labels, structure)
+            log.debug(f"Inserting {row_labels} -> {leaf_value}")
+            insert(leaf_value, row_labels, structure)
     return structure
 
 
