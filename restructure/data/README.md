@@ -46,7 +46,28 @@ asociated with that class offering.)
 
 The implicit hierarchical structure can be made explicit in at least 
 two ways.  The clearest is probably to construct nested dictionaries 
-in memory, then dump them as json.  
+in memory, then dump them as json.  I have provided two utility 
+programs for this purpose. 
+
+- `csv_to_json.py` extracts nested dictionary structures from a CSV 
+  file with column headers (the kind of CSV file that a
+  Python `csv.DictReader` can interpret).  Some of the columns 
+  are interpreted as levels in the hierarchy, and at least 
+  one column is interpreted as data (usually numeric) associated 
+  with leaves of the tree.  `csv_to_json.py` requires a schema file 
+  like `data/csv_config.json` (for `data/SCH-flat.csv`)
+  or `data/park_visit_schema.json` (for 
+  `data/US-National-Parks_Recreation_Visits_1979-2023.csv`)
+  to identify columns by column headers.  `csv_to_json.py`
+  can process CSV files in an indented format, selecting
+  lines with data in the relevant columns and filling in
+  omitted labels from earlier lines. 
+- `schematize.py` applies a separate schema (not represented by 
+  columns) to a flat list of (key, value) pairs.  For example,
+  `python3 schematize.py data/sch-schema.json data/sch.csv`
+  groups elements of `sch.csv` according to the patterns in 
+  `sch-schema.json`. 
+
 
 It is also possible to translate 
 the flat file directly into a json representation, without building 
@@ -64,6 +85,14 @@ The idea of control break logic is simple:  On reading each record
 `SCH-flat.csv`) is a "control break" that implicitly also signals a 
 break at each lower level (e.g., the "Level" field). 
 
+Common spreadsheet programs like Excel can do some grouping and 
+totalling using control break logic.  
+Frustratingly, Excel places subtotals in the same column as detail 
+data, and not in a separate column for subtotals.
+It may be useful to write (yet another) Python script to
+summarize data using control break logic before producing the 
+hierarchical representation. 
+
 ## Data sources
 
 The [National Parks visit database](
@@ -75,6 +104,12 @@ Please refer students to the accompanying
 [documentation on national parks data](
 https://www.responsible-datasets-in-context.com/posts/np-data/
 ) if you use this dataset in a class project.
+This data is shared in accordance with its
+Creative Commons license
+[CC by by 4.0](
+https://creativecommons.org/licenses/by/4.0/?ref=chooser-v1).  
+The datasets were curated and published by Melanie Walsh, and the data
+essay was written by Melanie Walsh and Os Keyes.
 
 [Our World in Data](https://ourworldindata.org/)
 is an additional source of rich, open source datasets, mostly

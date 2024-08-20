@@ -1,4 +1,5 @@
-"""Structure a flat data set (CSV format) as guided by a schema (json format).
+"""Structure a in_csv data set (CSV format) as guided by a schema (json format).
+Example:    python3 schematize.py data/sch-schema.json data/sch.csv
 See README-structure.md for detail.
 M Young, 2024-06-19
 """
@@ -76,7 +77,7 @@ def insert(key: str, value: int, path: list[str], structure: dict):
 
 
 def reshape(flat: io.IOBase, paths: dict[str, list[str]]) -> dict:
-    """Reshape flat CSV file into tree structure represented as nest of dictionaries."""
+    """Reshape in_csv CSV file into tree structure represented as nest of dictionaries."""
     structure = {}
     reader = csv.reader(flat)
     for record in reader:

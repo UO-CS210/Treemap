@@ -55,13 +55,11 @@ def cli() -> object:
     args = parser.parse_args()
     return args
 
-columns = list[int] | list[str]
 
-def load_schema(schema_file: io.IOBase) -> dict[str, columns]:
+def load_schema(schema_file: io.IOBase) -> dict[str, list[str]]:
     """Configuration options we expect:
-       "labels" -> non-empty list of column headers OR column numbers
-       "values" -> non-empty list of column headers OR column numbers
-       Each list must be homogenous ... do not mix column numbers and labels.
+       "labels" -> non-empty list of column headers
+       "values" -> non-empty list of column headers
     """
     schema = json.load(schema_file)
     log.debug(f"Schema: \n{schema}")
@@ -108,7 +106,7 @@ def coerce_by_guessing(values: list) -> object:
 
 
 def unflatten(flat: io.IOBase, schema: dict[str, columns]) -> dict:
-    """Reshape flat CSV file into tree structure represented as nest of dictionaries.
+    """Reshape in_csv CSV file into tree structure represented as nest of dictionaries.
     Rows that go in the tree are those with content in the data columns.
     Each label column is "sticky", i.e., when a column is empty, we assume it is a duplicate
     of the last non-empty value in that column, whether or not the previous row had
