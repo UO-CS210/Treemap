@@ -26,6 +26,9 @@ Transformation is guided by a configuration file in JSON format, e.g.
 
 Note "values" columns will be interpreted as numbers (int or float) if they appear to be numeric,
 but "labels" columns will always be treated as strings.
+
+FIXME: To support summarization, we need to ignore schema columns that are not present
+  (perhaps with a warning).
 """
 
 import json
@@ -38,7 +41,7 @@ import sys
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 
 def cli() -> object:
     """Command line interface"""
@@ -105,7 +108,7 @@ def coerce_by_guessing(values: list) -> object:
 
 
 
-def unflatten(flat: io.IOBase, schema: dict[str, columns]) -> dict:
+def unflatten(flat: io.IOBase, schema: dict[str, list[str]]) -> dict:
     """Reshape in_csv CSV file into tree structure represented as nest of dictionaries.
     Rows that go in the tree are those with content in the data columns.
     Each label column is "sticky", i.e., when a column is empty, we assume it is a duplicate
@@ -113,8 +116,16 @@ def unflatten(flat: io.IOBase, schema: dict[str, columns]) -> dict:
     data values.
     """
     reader = csv.DictReader(flat)
-    labels = schema["labels"]
     values = schema["values"]
+    # Missing column labels could be because we are using a schema for
+    # a table that has been summarized by aggregate.py.  Warn but continue.
+    column_labels = reader.fieldnames
+    labels = []
+    for label in schema["labels"]:
+        if label in column_labels:
+            labels.append(label)
+        else:
+            log.warning(f"Missing column label '{label}' will be ignored")
 
     #
     structure = {}
@@ -141,7 +152,8 @@ def main():
     log.debug(f"Schema: {map}")
     structure = unflatten(args.data, map)
     # log.debug(f"Reshaped data: {json.dumps(structure, indent=3)}")
-    print(json.dumps(structure, indent=3))
+    print(json.dumps(structure, indent=3), file=args.output)
+
 
 if __name__ == "__main__":
     main()

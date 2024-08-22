@@ -2,8 +2,10 @@
 Intended as a preparatory step before extracting a tree
 from the CSV file.
 
-Uses schema files compatible with those used by csv_to_json.py, and
-preserves columns so that the same schema may be used in further steps.
+Uses schema files compatible with those used by csv_to_json.py,
+provided only retained columns are given.   If elided columns are
+mentioned in the schema, there will be errors in subsequent
+processing using that schema.
 """
 import csv
 import json

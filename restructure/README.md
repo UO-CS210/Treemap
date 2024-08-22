@@ -1,5 +1,52 @@
 # Structuring flat data
 
+Datasets are often available as flat CSV files and need some 
+pre-processing to recover the tree structure needed for treemappping.
+We provide some help for two ways of obtaining the tree structure 
+(expressed in JSON), depending on whether each level of the 
+hierarchy is represented by a separate column or the group structure 
+is separate. 
+
+## Columns as levels of hierarchy
+
+Often each level of grouping is represented by a separate column.  
+In this case we can think of the CSV file as a linearization of a 
+tree, with each row representing a path from root to leaf.  We still 
+need to identify the order of columns and which columns hold numeric 
+data in the leaves of the tree, which we can do with a schema file 
+in JSON like `restructure/data/beverage_schema.json` for
+`restructure/data/beverages_by_meal.csv`  (a simple test case) or
+`restructure/data/park_visit_schema.json` for the real dataset
+`US-National-Parks_Recreation_Visits_1972-2023.csv` Note in both 
+cases that columns are not necessarily ordered left to right from 
+most general to most specific.  The order of column headers in the 
+schema is taken as order general to specific. 
+
+Utility program `csv_to_json.py` extracts a tree from a CSV file and 
+a schema and 
+produces a JSON representation.   
+
+Sometimes it is useful to first 
+summarize numeric data (aggregating rows that share some fields), 
+which `aggregate.py` can do with the same schema.  Similar 
+summarization can be accomplished with Python Panda aggregation 
+functions, in SQL with SUM.  Excel can even produce subtotals, but 
+in a manner unsuited to further processing.  SQL and Pandas provide 
+more power and flexibility, but `aggregate.py` may be useful for 
+simple scripted workflows with a minimum of programming. 
+
+For example, we might first summarize the national park visit data 
+by state, and then produce a JSON representation of that data for 
+treemapping, with the following shell commands: 
+
+```shell
+cd restructure
+python3 aggregate.py data/park_visit_schema.json data/US-National-Parks_RecreationVisits_1979-2023.csv visits.csv --by State
+python3 csv_to_json.py data/park_visit_schema.json visits.csv data/visits.json
+```
+
+## Separate grouping information
+
 Sometimes we have just a flat collection of data but we want to 
 impose a hierarchical structure on it based on an external source of 
 information.  For example, we might have just a list of university 
@@ -13,7 +60,7 @@ It is not too hard to reorganize one flat data set manually, but it
 is both tedious and error-prone to repeat the same reorganization 
 multiple times.  Therefore, we would rather automate the 
 reorganization based on a _schema_ that can be reused.  That's what 
-this sub-project attempts. 
+this sub-project attempts.
 
 ## The Schema
 

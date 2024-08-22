@@ -1,10 +1,8 @@
 {
-  "COMMENT": "Schema of US-National-Parks_Recreation_Visits for recovering tree structure.  Note reordering.",
+  "COMMENT": "Schema of US-National-Parks_Recreation_Visits for recovering tree structure.  Note reordering and selection.",
   "labels": [
     "Region",
-    "State",
-    "ParkName",
-    "Year"
+    "State", "ParkName"
   ],
   "values": [
     "RecreationVisits"
