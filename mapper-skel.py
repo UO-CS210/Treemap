@@ -3,7 +3,7 @@ Author: _Your name here_
 Credits: _Did you collaborate with other students or find useful materials online?
          _Did you use AI tools to create some starter code?
 
-Instructions:  Copy this file to treemap.py and then edit it. REMOVE this part of the
+Instructions:  Copy this file to mapper.py and then edit it. REMOVE this part of the
 docstring and complete the identifying information above.  Credits should start out
 empty, but add classmates or outside sources (including web sources or AI helpers)
 as appropriate.  Be certain you understand it well enough to recreate it without help.
