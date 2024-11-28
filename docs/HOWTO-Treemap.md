@@ -225,7 +225,7 @@ We also import that `doctest` module, which allows us to include
 test cases in function docstrings.  We will make use of that shortly.
 Because it becomes unwieldy to include more than a few test cases in 
 docstrings, I have also provided some separate test modules 
-including `test_splitter.py`. 
+including `test_splitter.py`.
 
 Next we see imports of two modules that I have provided for this 
 project.
@@ -367,13 +367,14 @@ There are several things to notice about this function header:
 At this point you should check to your work.  We don't expect our 
 test cases to succeed.  In fact they should all fail. We just want 
 to ascertain that we haven't made any fatal typos or syntax errors. 
-You should run `splitter.py`, and expect to see output that looks 
+You should run `mapper.py`, and expect to see output that looks 
 like this: 
 
 ```doctest
 DEBUG:__main__:Bisecting [1, 1, 2]
 **********************************************************************
-File "/Users/michal/Dropbox/23F-210/projects/Treemap/splitter.py", line 20, in __main__.bisect
+File "/Users/michal/Dropbox/23F-210/projects/Treemap/mapper.py", line 
+20, in __main__.bisect
 Failed example:
     bisect([1, 1, 2])  # Perfect balance
 Expected:
@@ -400,7 +401,7 @@ or like this:
 ```doctest
 Error
 **********************************************************************
-File "/Your/file/path/here", line 20, in splitter.bisect
+File "/Your/file/path/here", line 20, in mapper.bisect
 Failed example:
     bisect([1, 1, 2])  # Perfect balance
 Exception raised:
@@ -627,8 +628,8 @@ OK
 
 ### Checkpoint: Summary of your work so far
 
-So far you have created a function `bisect` in a new file
-`splitter.py`.  This function takes a list of at least two
+So far you have created a function `bisect` in file
+`mapper.py`.  This function takes a list of at least two
 positive numbers.  It returns _two_ results as a tuple.
 The first result and the second result together comprise the input 
 list, and their sum is as close as possible to equal. 
@@ -639,8 +640,8 @@ index of the first element of the partial sum that is greater than
 the sum of all the elements of the list being bisected.  Finally it 
 chooses to include that element in the first part or not.  
 
-All the doctests in `splitter.py` should now pass when you execute 
-`splitter.py` by itself.  The test cases in `test_splitter.py` 
+All the doctests in `mapper.py` should now pass when you execute 
+`mapper.py` by itself.  The test cases in `test_splitter.py` 
 include those and a few more, including a speed test.  All the test 
 cases in `test_splitter.py` should also pass. 
 
@@ -696,7 +697,7 @@ and one or more recursive cases.  The base case for recursive tiling
 of a list of integer values is simple:  If the list contains a 
 single value, it takes the whole rectangle:
 ```python
-    display.draw(rect, items[0])
+    display.draw(rect, str(items[0]))
 ```
 
 The recursive case uses the `bisect` function: 
@@ -721,7 +722,7 @@ nicer-looking treemap:
 ### Checkpoint
 
 This concludes part 1 of the project.  You should now have a 
-function `bisect` in `splitter.py` and a function `layout` in 
+function `bisect` and a function `layout` in 
 `mapper.py` that together produce treemaps like the illustration 
 above from lists of integers in JSON files like
 `data/medium_flat.json`.   This might be a good time for a 
@@ -804,7 +805,7 @@ bisecting the nested list `[12, [3, 18], [[4, 2], 1]]`, we should
 treat as if it were `[12, 21, 7]`, i.e.,
 `[deep_sum(12), deep_sum([3, 18]), deep_sum([[4, 2], 1]])]`.
 
-We will need to add a `deep_sum` function in `splitter.py`, with 
+We will need to add a `deep_sum` function in `mapper.py`, with 
 this header: 
 
 ```python
@@ -862,7 +863,7 @@ def bisect(li: Nest) -> tuple[Nest, Nest]:
 Initially these test cases will fail with exceptions: 
 
 ```pycon
-File "/your/path/splitter.py", line 50, in splitter.bisect
+File "/your/path/mapper.py", line 50, in mapper.bisect
 Failed example:
     bisect([[3, 3], 5, [2, 2], [1, 1, 1]])
 Exception raised:
@@ -1000,7 +1001,7 @@ Nest = Real | list['Nest'] | dict[ str, 'Nest'] | tuple[str, 'Nest']
 ```
 
 As when we introduced nested lists, we will need to revise both the 
-`deep_sum` function in `splitter.py` and the `layout` function in 
+`deep_sum` function and the `layout` function in 
 `mapper.py` to accommodate dictionaries and tuples.  Wherever we
 encounter a dictionary, we will simply convert it to a list of pairs. 
 
@@ -1087,6 +1088,9 @@ We'll enumerate the cases following the definition of `Nest`,
 without writing code at first: 
 
 - `Real`:   Draw a single tile, labeled with the value.
+   Since `display.draw_tile` wants a string to use as a label,
+   use the `str` function to get a string representation of the
+   number. 
 - `list[Nest]` : Depends on length of the list.
   - A single item:  Handling depends on whether that single item is 
     an `Real`, a `tuple`, a `dict`, or something else.  We could 
