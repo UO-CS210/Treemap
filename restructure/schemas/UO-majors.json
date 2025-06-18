@@ -1,0 +1,61 @@
+[{
+  "CAS": {
+    "SCDS": [
+      "CS",
+      "CIS",
+      "DSCI",
+      "MACS", "PMCS",
+      "CYBR"
+    ],
+    "Global": [
+      "JDST", "AST", "JPN", "CHN",  "ITAL", "R&ES", "LAS",
+      "FR", "FREN", "GER", "RL",  "SPAN"
+    ],
+    "NatSci": [
+      "PSY",
+      "PHYS",
+      "MSCI",
+      "MATH",
+      "BI", "BIC", "CH",
+      "NEUR", "GEOL",
+      "MARB", "GS",
+      "ESCI", "ERTH",
+      "PEN"
+    ],
+    "SocSci": [
+      "PS", "GEOG", "GLBL", "SDSC",
+      "EC", "GSS", "INTL", "PINS",
+      "SDSC", "ETHN", "FLR",
+      "LING", "NAIS",
+      "SOC", "WGS", "WGSS"
+    ],
+    "Hum": [
+      "REl", "ENG",
+      "CINE", "COLT",  "MDVL", "TA"
+    ]
+  },
+  "Business": [
+    "BADM",
+    "ACTG",
+    "PBA"
+  ],
+  "Design": [
+    "AMAN", "ARBF", "ARCH", "ARDF", "ARDG", "ARH",
+    "ART", "ARTC", "ARTF", "ARTM", "ARTO", "ARTP", "ARTR",
+    "ARTS", "ATCF", "ATCH", "ENVD", "IARC", "LA", "MPS",
+    "P3PM", "PDS", "PDSG", "PLA", "PPPM"
+  ],
+  "Ed": [
+    "CDS", "EDF", "PED", "PFHS"
+  ],
+  "Child Bhvr": [
+    "CBH", "PCBH"
+  ],
+  "SOJC": [
+    "J", "JAD", "JMS", "JPR",
+    "PAD", "PJ", "PJMS", "PPR"
+  ],
+  "SOMD": [
+    "DABF", "DANC", "MCOM", "MJS", "MPTL", "MUED", "MUP", "MUS", "POP"
+  ]
+}]

@@ -1,4 +1,4 @@
-"""Structure a in_csv data set (CSV format) as guided by a schema (json format).
+"""Structure a CSV data set as guided by a schema in JSON format.
 Example:    python3 schematize.py data/sch-schema.json data/sch.csv
 See README-structure.md for detail.
 M Young, 2024-06-19
@@ -13,14 +13,21 @@ import re
 
 import logging
 import sys
+from numbers import Number
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 
 def cli() -> object:
     """Command line interface"""
     parser = argparse.ArgumentParser("Structure CSV data guided by json schema")
+    parser.add_argument("--key",
+                        help="Optional: Key values appear in column with this header",
+                        nargs="?", default=None)
+    parser.add_argument("--value",
+                        help="(Only if 'key' specified) Values appear in column with this header",
+                        nargs="?", default=None)
     parser.add_argument("schema", type=argparse.FileType(mode="r"),
                         help="Schema expressed as json; see README-structure.md for details")
     parser.add_argument("data", type=argparse.FileType(mode="r"),
@@ -75,14 +82,54 @@ def insert(key: str, value: int, path: list[str], structure: dict):
         structure[initial] = {}
     insert(key, value, suffix, structure[initial])
 
+def to_number(s: str) -> Number:
+    """Converts to integer if possible, float if necessary;
+    throws error if neither is possible.
+    """
+    if s.isdecimal():
+        return int(s)
+    return float(s)   # Throws error if it doesn't work
 
-def reshape(flat: io.IOBase, paths: dict[str, list[str]]) -> dict:
+
+def load_unlabeled(flat: io.IOBase) -> list[tuple[str, int]]:
+    """Read the input CSV file WITHOUT headers, assuming
+    first two fields are key and value.
+    """
+    reader = csv.reader(flat)
+    pairs = []
+    try:
+        for record in reader:
+            log.debug(f"Interpreting CSV line as {record}")
+            key, value = record[:2]
+            pairs.insert((key, to_number(value)))
+    except Exception as e:
+        raise ValueError(f"Could not interpret data row {record}")
+    return pairs
+
+
+def load_labeled(flat: io.IOBase, keys: str, values: str) -> list[tuple[str, int]]:
+    """Read the key, value pairs from CSV file WITH headers"""
+    reader = csv.DictReader(flat)
+    pairs = []
+    try:
+        for record in reader:
+            log.debug(f"Interpreting CSV line as {record}")
+            key = record[keys]
+            value_str = record[values]
+            try:
+                value = to_number(value_str)
+            except:
+                raise ValueError(f"Couldn't convert {value_str} in {values} field of {record}")
+            pairs.append((key, value))
+    except KeyError as e:
+        raise ValueError(f"Missing column {keys} or {values}")
+    return pairs
+
+
+def reshape(pairs: list[tuple[str, int]], paths: dict[str, list[str]]) -> dict:
     """Reshape in_csv CSV file into tree structure represented as nest of dictionaries."""
     structure = {}
-    reader = csv.reader(flat)
-    for record in reader:
-        log.debug(f"Interpreting CSV line as {record}")
-        key, value = record[:2]
+    for key, value in pairs:
         if key in paths:
             path = paths[key]
         else:
@@ -106,9 +153,14 @@ def main():
     args = cli()
     map = parse_schema(args.schema)
     log.debug(f"Ancestry map: {map}")
-    structure = reshape(args.data, map)
+    if args.key or args.value:
+        assert args.key and args.value, "Specify both key and value columns or neither"
+        pairs = load_labeled(args.data, args.key, args.value)
+    else:
+        pairs = load_unlabeled(args.data)
+    structure = reshape(pairs, map)
     # log.debug(f"Reshaped data: {json.dumps(structure, indent=3)}")
-    print(json.dumps(structure, indent=3))
+    json.dump(structure, args.output, indent=3)
 
 if __name__ == "__main__":
     main()
