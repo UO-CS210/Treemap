@@ -59,18 +59,23 @@ def set_tile_color(properties: dict):
 
 # ------
 
-def draw_tile(r: geometry.Rect, label: str | None = None):
+def draw_tile(r: geometry.Rect,
+              label: str | None = None,
+              tags: list[str] | None = None):
     """Draw the tile (on both media).
      Displays on Tk (Python built-in graphics) and
      also writes corresponding graphics into buffer to
      produce corresponding SVG diagram which can be displayed
      in a web page, imported into a diagramming tool like
      Inkscape, OmniGraffle, Illustrator, etc.
+     Tags can be used to indicate additional SVG classes for style sheets.
     """
     log.debug(f"Drawing {r}")
     properties = {"margin": 4, "class": "tile"}
     if label:
         properties["label"] = label
+    if tags:
+        properties["tags"] = " ".join(tags)
     fill_color, label_color = color_contrast.next_color()
     set_tile_color(properties)
     tk.draw_rect(r.ll.x, r.ll.y, r.ur.x, r.ur.y, properties)
@@ -78,7 +83,9 @@ def draw_tile(r: geometry.Rect, label: str | None = None):
     llx, lly, urx, ury = r.ll.x, r.ll.y, r.ur.x, r.ur.y
     if label:
         tk.draw_label(label, llx, lly, urx, ury, properties)
-        svg.draw_label(label, llx, lly, urx, ury, properties)
+        # svg label drawing is now within svg.draw_rect so that
+        # a label can be a tool-tip if it doesn't fit in rectangle
+        # svg.draw_label(label, llx, lly, urx, ury, properties)
 
 def begin_group(r: geometry.Rect, label: str | None = None):
     """A group contains multiple rectangular regions.
