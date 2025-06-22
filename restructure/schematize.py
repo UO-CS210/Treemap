@@ -28,9 +28,9 @@ def cli() -> object:
     parser.add_argument("--value",
                         help="(Only if 'key' specified) Values appear in column with this header",
                         nargs="?", default=None)
-    parser.add_argument("schema", type=argparse.FileType(mode="r"),
+    parser.add_argument("schema", type=argparse.FileType(mode="r", encoding="utf-8"),
                         help="Schema expressed as json; see README-structure.md for details")
-    parser.add_argument("data", type=argparse.FileType(mode="r"),
+    parser.add_argument("data", type=argparse.FileType(mode="r", encoding="utf-8"),
                         nargs="?", default=sys.stdin,
                         help="Flat data file as CSV with each line being string, int for category, quantity"
                         )
@@ -45,7 +45,8 @@ def parse_schema(schema_file: io.IOBase) -> dict[str, list[str]]:
     expressed as json.
     """
     map = { }
-    schema = json.load(schema_file)
+    json_text = schema_file.read()
+    schema = json.loads(json_text)
     log.debug(f"Schema: \n{schema}")
     assert isinstance(schema, list), f"Schema should be a list of dictionaries"
 
