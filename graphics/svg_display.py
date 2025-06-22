@@ -73,7 +73,7 @@ def draw_rect(llx, lly, urx, ury, properties: dict):
     margin = properties["margin"]
     css_class = properties["class"]
     SVG_BUFFER.append(
-        f"""<g><rect x="{llx + margin}" y="{lly + margin}" 
+        f"""\n<g><rect x="{llx + margin}" y="{lly + margin}" 
          width="{urx - llx - 2 * margin}"  height="{ury - lly - 2 * margin}"
          rx="10"  fill="{properties["fill_color"]}" 
          class="{css_class}" />
@@ -91,11 +91,11 @@ def begin_group(label: str | None,
                     properties: dict):
     margin = properties["margin"]
     if label:
-        group_label = f"\n<title>{xml_escape(label)}</title>"
+        group_label = f"<title>{xml_escape(label)}</title>"
     else:
         group_label = ""
     SVG_BUFFER.append(
-        f"""<g class="group">{group_label}
+        f"""\n<g class="group">{group_label}
         <rect x="{llx + margin}" y="{lly + margin}" 
         width="{urx - llx - 2 * margin}"  height="{ury - lly - 2 * margin}"
         rx="5"  
@@ -119,7 +119,7 @@ def text_width_roughly(label: str) -> int:
 
 
 def end_group():
-    SVG_BUFFER.append("</g>")
+    SVG_BUFFER.append("\n</g>")
 
 
 def draw_label(label: str, llx: int, lly: int, urx: int, ury: int,
