@@ -9,15 +9,19 @@ logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 
-# These are all set in the 'init' function
-SVG_BUFFER: list[str] = []
-SVG_OUT: io.BytesIO | None = None
-WIDTH = 0
-HEIGHT = 0
-ELIDE_WIDE_LABELS = False  # This really belongs in a configuration file
+# We will assemble the output SVG file from
+# these parts, in this order
+#   - SVG header
+#   - CSS prologue
+#   - CSS entries buffer, which we build up incrementally as we build the structure
+#   - CSS epilogue
+#   - SVG entries buffer, which we build up incrementally with 1-1 correspondence to CSS entries
+#   - SVG epilogue
 
-SVG_HEAD = ""
-SVG_PROLOG = """"
+
+
+SVG_HEAD = """<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" >"""
+CSS_PROLOGUE = """"
    <defs>
    <style>
     text {  text-anchor: middle;  
@@ -30,11 +34,26 @@ SVG_PROLOG = """"
     .tile_label_black { fill: black;   white-space: pre-wrap; }
     .group_outline { stroke: red; fill: white; stroke-width: 1; }
     .group_outline:hover { fill: red; }
+"""
+CSS_BUFFER: list[str] = []
+CSS_EPILOGUE   = """
    </style>
    </defs>
 """
+SVG_BUFFER: list[str] = []
+SVG_EPILOGUE = "\n</svg>"
 
-def init(width: int, height: int, svg_path: str = None):
+
+SVG_OUT: io.BytesIO | None = None
+WIDTH = 0
+HEIGHT = 0
+ELIDE_WIDE_LABELS = False  # This really belongs in a configuration file
+IS_STYLED = False  # Is there a user-supplied CSS file, or do we need to randomly generate colors?
+
+
+
+
+def init(width: int, height: int, svg_path: str = None, svg_css_file: str=""):
     """We keep SVG commands in a buffer, to be written
     at the end of execution.
     """
@@ -42,19 +61,25 @@ def init(width: int, height: int, svg_path: str = None):
     global SVG_OUT
     global WIDTH
     global HEIGHT
+    global IS_STYLED
     WIDTH, HEIGHT = width, height
-    if svg_path == None:
+    if not svg_path:
         svg_path = "treemap.svg"
     try:
         SVG_OUT = open(svg_path, "w")
-        svg_header = f"""
-        <svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" >
-        """
-        SVG_BUFFER = [svg_header, SVG_PROLOG]
         log.info(f"SVG figure will be written to {svg_path}")
     except FileNotFoundError:
-        log.warning(f"Could not open {svg_path}")
+        log.error(f"Could not open SVG file {svg_path}")
         sys.exit(1)
+    if svg_css_file:
+        IS_STYLED = True
+        try:
+            css_file = open(svg_css_file, "r")
+            for line in css_file:
+                CSS_BUFFER.append(line)
+        except FileNotFoundError:
+            log.error(f"Could not open style file {svg_css_file}")
+            sys.exit(1)
 
 
 def xml_escape(s: str) -> str:
@@ -63,7 +88,6 @@ def xml_escape(s: str) -> str:
             replace("<", "&lt;")).
             replace(">", "&gt;").
             replace('"', '&quot;'))
-
 
 
 def draw_rect(llx, lly, urx, ury, properties: dict):
@@ -149,7 +173,19 @@ def draw_label(label: str, llx: int, lly: int, urx: int, ury: int,
           """)
 
 def close():
+    # We will assemble the output SVG file from
+    # these parts, in this order
+    #   - SVG header
+    #   - CSS prologue
+    #   - CSS entries buffer, which we build up incrementally as we build the structure
+    #   - CSS epilogue
+    #   - SVG entries buffer, which we build up incrementally with 1-1 correspondence to CSS entries
+    #   - SVG epilogue
     log.info(f"Saving SVG representation as {SVG_OUT.name}")
-    SVG_BUFFER.append("</svg>")
-    SVG_OUT.write("".join(SVG_BUFFER))
+    SVG_OUT.write(SVG_HEAD)
+    SVG_OUT.write(CSS_PROLOGUE)
+    SVG_OUT.write("\n".join(CSS_BUFFER))
+    SVG_OUT.write(CSS_EPILOGUE)
+    SVG_OUT.write("\n".join(SVG_BUFFER))
+    SVG_OUT.write(SVG_EPILOGUE)
     SVG_OUT.close()

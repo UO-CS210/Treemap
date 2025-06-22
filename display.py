@@ -17,9 +17,9 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 
-def init(width: int, height: int):
+def init(width: int, height: int, css_file: str=""):
     tk.init(width, height)
-    svg.init(width, height)
+    svg.init(width, height, css_file)
 
 # For documentation, I want consistent color choice
 # when describing an example step-by-step.
