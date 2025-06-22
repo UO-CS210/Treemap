@@ -12,7 +12,7 @@
       "FR", "FREN", "GER", "RL",  "SPAN"
     ],
     "NatSci": [
-      "PSY",
+      "PSY", "HPHY",
       "PHYS",
       "MSCI",
       "MATH",
@@ -23,6 +23,7 @@
       "PEN"
     ],
     "SocSci": [
+      "ANTH", "ENV", "HIST", "HUM",
       "PS", "GEOG", "GLBL", "SDSC",
       "EC", "GSS", "INTL", "PINS",
       "SDSC", "ETHN", "FLR",
@@ -30,8 +31,8 @@
       "SOC", "WGS", "WGSS"
     ],
     "Hum": [
-      "REl", "ENG",
-      "CINE", "COLT",  "MDVL", "TA"
+      "REl", "ENG", "CLAS", "FPC",
+      "CINE", "COLT",  "MDVL", "TA", "PHIL", "REL"
     ]
   },
   "Business": [
@@ -46,7 +47,7 @@
     "P3PM", "PDS", "PDSG", "PLA", "PPPM"
   ],
   "Ed": [
-    "CDS", "EDF", "PED", "PFHS"
+    "CDS", "EDF", "PED", "PFHS", "FHS"
   ],
   "Child Bhvr": [
     "CBH", "PCBH"
