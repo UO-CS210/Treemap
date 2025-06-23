@@ -6,6 +6,7 @@
 import json    # Acquire data to be mapped in JSON exchange format  (see https://www.json.org)
 import argparse
 import mapper
+from treemap_options import options
 
 def cli() -> object:
     """Obtain input file and options from the command line.
@@ -18,7 +19,19 @@ def cli() -> object:
                         type=int)
     parser.add_argument("height", help="height of canvas in pixels",
                         type=int)
+    # User-provided CSS file to style the SVG output?  (Applies to SVG only)
+    parser.add_argument("css", help="CSS file to use for SVG", nargs="?", default=None)
+    # Suppress long labels? (Applies to SVG only for now)
+    parser.add_argument("hide_long", help="Suppress display of overlong labels in SVG",
+                        nargs="?", default=False)
     args = parser.parse_args()
+
+    #  Options communicated through treemap_options
+    if args.css:
+        options["css_file"] = args.css_file
+        # Implemented only by SVG output
+    options["hide_long"] = args.hide_long
+
     return args
 
 

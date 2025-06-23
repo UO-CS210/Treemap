@@ -2,7 +2,7 @@
 import io
 import sys
 
-import svg_config
+from treemap_options import options
 
 import logging
 logging.basicConfig()
@@ -20,7 +20,7 @@ log.setLevel(logging.DEBUG)
 
 
 
-SVG_HEAD = """<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" >"""
+SVG_HEAD = "uninitialized"  # Set in 'init' with height and width
 CSS_PROLOGUE = """"
    <defs>
    <style>
@@ -51,18 +51,18 @@ ELIDE_WIDE_LABELS = False  # This really belongs in a configuration file
 IS_STYLED = False  # Is there a user-supplied CSS file, or do we need to randomly generate colors?
 
 
-
-
-def init(width: int, height: int, svg_path: str = None, svg_css_file: str=""):
+def init(width: int, height: int, svg_path: str = None):
     """We keep SVG commands in a buffer, to be written
     at the end of execution.
     """
+    global SVG_HEAD
     global SVG_BUFFER
     global SVG_OUT
     global WIDTH
     global HEIGHT
     global IS_STYLED
     WIDTH, HEIGHT = width, height
+    SVG_HEAD = f"""<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" >"""
     if not svg_path:
         svg_path = "treemap.svg"
     try:
@@ -71,14 +71,16 @@ def init(width: int, height: int, svg_path: str = None, svg_css_file: str=""):
     except FileNotFoundError:
         log.error(f"Could not open SVG file {svg_path}")
         sys.exit(1)
-    if svg_css_file:
+
+    css = options.get("css_file", False)
+    if css:
         IS_STYLED = True
         try:
-            css_file = open(svg_css_file, "r")
+            css_file = open(css, "r")
             for line in css_file:
                 CSS_BUFFER.append(line)
         except FileNotFoundError:
-            log.error(f"Could not open style file {svg_css_file}")
+            log.error(f"Could not open style file {css}")
             sys.exit(1)
 
 
@@ -96,9 +98,11 @@ def draw_rect(llx, lly, urx, ury, properties: dict):
     """
     margin = properties["margin"]
     css_class = properties["class"]
+    width = max(1, (urx - llx - 2 * margin))
+    height = max(1, (ury - lly - 2 * margin))
     SVG_BUFFER.append(
         f"""\n<g><rect x="{llx + margin}" y="{lly + margin}" 
-         width="{urx - llx - 2 * margin}"  height="{ury - lly - 2 * margin}"
+         width="{width}"  height="{height}"
          rx="10"  fill="{properties["fill_color"]}" 
          class="{css_class}" />
       """)
@@ -161,10 +165,10 @@ def draw_label(label: str, llx: int, lly: int, urx: int, ury: int,
     # and newlines should break the text into parts
     label = xml_escape(label)
 
-    if svg_config.SVG_HIDE_LONG_LABELS and width > (urx - llx):
+    if options["hide_long"] and width > (urx - llx):
+        # Create a "title" element in place of textual label
         label = label.replace('\n', ' – ')
         SVG_BUFFER.append(f"""<title>{label}</title>""")
-
     else:
         label = label.replace('\n', f'</tspan><br /><tspan x="{center_x}" dy="1em">')
         SVG_BUFFER.append(
