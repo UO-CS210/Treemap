@@ -1,0 +1,15 @@
+/* Experiment styling SVG elements in CSS */
+.viruses { fill: burlywood; color: black; }
+.prokaryotes { fill: darkcyan; color: white; }
+/*
+    "bacteria": 1.5,
+    "archaea": 0.3
+  },
+
+  "eukaryotes": {
+
+ */
+    .protists { fill: lightgoldenrodyellow; }
+    .animals { fill: cornsilk; }
+    .fungi { fill: antiquewhite; }
+    .plants { fill: lemonchiffon; }

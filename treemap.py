@@ -29,7 +29,7 @@ def cli() -> object:
 
     #  Options communicated through treemap_options
     if args.css:
-        options["css_file"] = args.css_file
+        options["css_file"] = args.css
         # Implemented only by SVG output
     options["messy"] = args.messy
 

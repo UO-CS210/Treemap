@@ -76,6 +76,8 @@ def draw_tile(r: geometry.Rect,
         properties["label"] = label
     if tags:
         properties["tags"] = " ".join(tags)
+    # fill_color and label_color will be used in tk graphics,
+    # and also in SVG graphics ONLY if the user hasn't provided a CSS stylesheet
     fill_color, label_color = color_contrast.next_color()
     set_tile_color(properties)
     tk.draw_rect(r.ll.x, r.ll.y, r.ur.x, r.ur.y, properties)

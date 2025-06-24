@@ -2,6 +2,7 @@
 import io
 import sys
 from idlelib.debugobj_r import remote_object_tree_item
+from token import LBRACE
 
 from graphics.tk_display import LINE_HEIGHT_APPROX
 from treemap_options import options
@@ -93,19 +94,26 @@ def xml_escape(s: str) -> str:
             replace(">", "&gt;").
             replace('"', '&quot;'))
 
+LBRACE = "{"
+RBRACE = "}"
 
 def draw_rect(llx, lly, urx, ury, properties: dict):
     """Generate display directions for a tile in SVG rendering.
     Includes labeling the rectangle, in text or as a tool-tip.
     """
     margin = properties["margin"]
-    css_class = properties["class"]
+    if "label" in properties:
+        css_class = gen_class_name(properties["label"])
+    elif "class" in properties:
+        css_class = gen_class_name(properties["class"])
+    else:
+        css_class = "tile"
     width = max(1, (urx - llx - 2 * margin))
     height = max(1, (ury - lly - 2 * margin))
     SVG_BUFFER.append(
-        f"""\n<g><rect x="{llx + margin}" y="{lly + margin}" 
+        f"""\n<g class="{css_class}"><rect x="{llx + margin}" y="{lly + margin}" 
          width="{width}"  height="{height}"
-         rx="10"  fill="{properties["fill_color"]}" 
+         rx="10"  
          class="{css_class}" />
       """)
     if "label" in properties:
@@ -113,6 +121,13 @@ def draw_rect(llx, lly, urx, ury, properties: dict):
         # it can be rendered as either <title> or <text> depending
         # on available space
         draw_label(properties["label"], llx, lly, urx, ury, properties)
+    if not IS_STYLED:
+        CSS_BUFFER.append(f"""
+            .{css_class}  {LBRACE} 
+                fill: {properties["fill_color"]} ;
+                color: {properties["label_color"]};
+            {RBRACE}
+        """)
     SVG_BUFFER.append("</g>")
 
 def gen_class_name(label: str) -> str:
@@ -121,7 +136,10 @@ def gen_class_name(label: str) -> str:
     other punctuation.
     """
     basis = label.split()[0]
-
+    if not basis[0].isalpha():
+        basis = "C_" + basis
+    chars = [ch for ch in basis if ch.isalnum()]
+    return "".join(chars)
 
 
 def begin_group(label: str | None,
@@ -135,7 +153,7 @@ def begin_group(label: str | None,
         group_label = ""
     SVG_BUFFER.append(
         f"""
-        <g class="group">{group_label}
+        <g class="group {group_class}">{group_label}
             <rect x="{llx + margin}" y="{lly + margin}" 
             width="{urx - llx - 2 * margin}"  height="{ury - lly - 2 * margin}"
             rx="5"  
