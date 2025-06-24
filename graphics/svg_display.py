@@ -218,7 +218,7 @@ def draw_label(label: str, llx: int, lly: int, urx: int, ury: int,
 
     # Also a label in the rectangle if it fits
     if options["messy"] or label_fits(label, llx, lly, urx, ury):
-        label = label.replace('\n', f'</tspan><br /><tspan x="{center_x}" dy="1em">')
+        label = label.replace('\n', f'</tspan><tspan x="{center_x}" dy="1.2em">')
         SVG_BUFFER.append(
             f"""<text x="{center_x}"  y="{center_y}"
              class="tile_label_{properties["label_color"]}" ><tspan>{label}</tspan></text>
