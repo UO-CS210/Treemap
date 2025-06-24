@@ -15,22 +15,23 @@ def cli() -> object:
     parser = argparse.ArgumentParser("Depict a data set as a squarified treemap")
     parser.add_argument("input", help="Data input in json format",
                         type=argparse.FileType("r"))
+    # User-provided CSS file to style the SVG output?  (Applies to SVG only)
+    parser.add_argument("--css", help="CSS file to use for SVG", nargs="?", default=None)
+    # Suppress long labels? (Applies to SVG only for now)
+    parser.add_argument("-m", "--messy", help="Include labels that are too big for their tiles",
+                         action="store_true")
     parser.add_argument("width", help="width of canvas in pixels",
                         type=int)
     parser.add_argument("height", help="height of canvas in pixels",
                         type=int)
-    # User-provided CSS file to style the SVG output?  (Applies to SVG only)
-    parser.add_argument("css", help="CSS file to use for SVG", nargs="?", default=None)
-    # Suppress long labels? (Applies to SVG only for now)
-    parser.add_argument("hide_long", help="Suppress display of overlong labels in SVG",
-                        nargs="?", default=False)
+
     args = parser.parse_args()
 
     #  Options communicated through treemap_options
     if args.css:
         options["css_file"] = args.css_file
         # Implemented only by SVG output
-    options["hide_long"] = args.hide_long
+    options["messy"] = args.messy
 
     return args
 

@@ -1,7 +1,9 @@
 """SVG display of Treemap"""
 import io
 import sys
+from idlelib.debugobj_r import remote_object_tree_item
 
+from graphics.tk_display import LINE_HEIGHT_APPROX
 from treemap_options import options
 
 import logging
@@ -113,6 +115,14 @@ def draw_rect(llx, lly, urx, ury, properties: dict):
         draw_label(properties["label"], llx, lly, urx, ury, properties)
     SVG_BUFFER.append("</g>")
 
+def gen_class_name(label: str) -> str:
+    """Extract a suitable and predictable  CSS class name from a label.
+    We keep first line, replacing spaces by underscores and removing
+    other punctuation.
+    """
+    basis = label.split()[0]
+
+
 
 def begin_group(label: str | None,
                     llx: int, lly: int, urx: int, ury: int,
@@ -120,18 +130,26 @@ def begin_group(label: str | None,
     margin = properties["margin"]
     if label:
         group_label = f"<title>{xml_escape(label)}</title>"
+        group_class = gen_class_name(label)
     else:
         group_label = ""
     SVG_BUFFER.append(
-        f"""\n<g class="group">{group_label}
-        <rect x="{llx + margin}" y="{lly + margin}" 
-        width="{urx - llx - 2 * margin}"  height="{ury - lly - 2 * margin}"
-        rx="5"  
-        class="group_outline" />
+        f"""
+        <g class="group">{group_label}
+            <rect x="{llx + margin}" y="{lly + margin}" 
+            width="{urx - llx - 2 * margin}"  height="{ury - lly - 2 * margin}"
+            rx="5"  
+            class="group_outline" />
         """
     )
 
-CHAR_WIDTH_APPROX = 17  # Rough approximation of average character width in pixels
+def end_group():
+    SVG_BUFFER.append("\n</g>")
+
+
+
+CHAR_WIDTH_APPROX = 13  # Rough approximation of average character width in pixels
+LINE_HEIGHT_APPROX = 17
 
 def text_width_roughly(label: str) -> int:
     """Approximate width of a string in pixels, based on
@@ -145,9 +163,17 @@ def text_width_roughly(label: str) -> int:
         longest = max(longest, len(line) * CHAR_WIDTH_APPROX)
     return longest
 
-
-def end_group():
-    SVG_BUFFER.append("\n</g>")
+def label_fits(label: str, llx: int, lly: int, urx: int, ury: int) -> bool:
+    """Does this label fit in the screen area (probably)?
+    We can't measure it directly (e.g., we don't know the typeface and size),
+    so we make a very rough guess based on typical character width and line height.
+    """
+    width = text_width_roughly(label)
+    if width > (urx - llx):
+        return False
+    if len(label.split()) * LINE_HEIGHT_APPROX > ury - lly:
+        return False
+    return True
 
 
 def draw_label(label: str, llx: int, lly: int, urx: int, ury: int,
@@ -159,17 +185,22 @@ def draw_label(label: str, llx: int, lly: int, urx: int, ury: int,
     """
     center_x = (urx + llx) // 2
     center_y = (lly + ury) // 2
-    width = text_width_roughly(label)
+
 
     # If a label contains special HTML/XML characters, they must be escaped,
     # and newlines should break the text into parts
     label = xml_escape(label)
 
-    if options["hide_long"] and width > (urx - llx):
-        # Create a "title" element in place of textual label
-        label = label.replace('\n', ' – ')
-        SVG_BUFFER.append(f"""<title>{label}</title>""")
-    else:
+    # Let's make a title element (tool tip) regardless
+    # (even when it duplicates the label)
+
+    # "Title" element works as a tool-tip
+    title = label.replace('\n', ' – ')
+    SVG_BUFFER.append(f"""<title>{title}</title>""")
+
+    # Also a label in the rectangle if it fits
+    # FIXME: Also check height
+    if options["messy"] or label_fits(label, llx, lly, urx, ury):
         label = label.replace('\n', f'</tspan><br /><tspan x="{center_x}" dy="1em">')
         SVG_BUFFER.append(
             f"""<text x="{center_x}"  y="{center_y}"
@@ -177,7 +208,7 @@ def draw_label(label: str, llx: int, lly: int, urx: int, ury: int,
           """)
 
 def close():
-    # We will assemble the output SVG file from
+    # Assemble the output SVG file from
     # these parts, in this order
     #   - SVG header
     #   - CSS prologue
