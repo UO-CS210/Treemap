@@ -81,7 +81,7 @@ def init(width: int, height: int, svg_path: str = None):
         try:
             css_file = open(css, "r")
             for line in css_file:
-                CSS_BUFFER.append(line)
+                CSS_BUFFER.append(line.strip())
         except FileNotFoundError:
             log.error(f"Could not open style file {css}")
             sys.exit(1)
@@ -121,6 +121,8 @@ def draw_rect(llx, lly, urx, ury, properties: dict):
         # it can be rendered as either <title> or <text> depending
         # on available space
         draw_label(properties["label"], llx, lly, urx, ury, properties)
+    # If we haven't been given a custom CSS file, we'll fill in colors
+    # that match the Tk rendering (which currently are randomly generated)
     if not IS_STYLED:
         CSS_BUFFER.append(f"""
             .{css_class}  {LBRACE} 
