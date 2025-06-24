@@ -199,7 +199,6 @@ def draw_label(label: str, llx: int, lly: int, urx: int, ury: int,
     SVG_BUFFER.append(f"""<title>{title}</title>""")
 
     # Also a label in the rectangle if it fits
-    # FIXME: Also check height
     if options["messy"] or label_fits(label, llx, lly, urx, ury):
         label = label.replace('\n', f'</tspan><br /><tspan x="{center_x}" dy="1em">')
         SVG_BUFFER.append(
