@@ -651,7 +651,7 @@ Now that we can split a list of positive integers into two balanced
 parts, let's use it over and over to tile a rectangular area.  
 
 ```commandline
-> python3 treemap.py data/medium_flat.json 500 500
+> python3 treemap.py data/Howto-examples/medium_flat.json 500 500
 ```
 You should see a tiling that is dominated by skinny rectangles: 
 
@@ -717,7 +717,7 @@ That is enough information to write a recursive version of `layout`.
 Do that now, and the same command above should produce a much
 nicer-looking treemap: 
 
-![Result of tiling `data/medium_flat.json`](img/part1-result.svg)
+![Result of tiling `data/Howto-examples/medium_flat.json`](img/part1-result.svg)
 
 ### Checkpoint
 
@@ -929,8 +929,8 @@ breakdown is based on the type of the value we are processing.
 There may also be a couple calls to `sum` in `layout` that will need 
 to be replaced by `deep_sum`.  That's all!   Make the 
 needed changes and check your work by attempting to build treemaps 
-for `data/small_nested_list.json` (`[3, [9, 2], 4, 8]`)
-and then `data/medium_nested_list.json`
+for `data/Howto-examples/small_nested_list.json` (`[3, [9, 2], 4, 8]`)
+and then `data/Howto-examples/medium_nested_list.json`
 
 ```commandline
 python3 treemap.py data/small_nested_list.json 400 400
@@ -940,7 +940,7 @@ contains 4, 8.
 ](img/small_nested_treemap.svg)
 
 ```commandline
-python3 treemap.py data/medium_nested_list.json 400 400
+python3 treemap.py data/Howto-examples/medium_nested_list.json 400 400
 ```
 
 ![Medium nested treemap](img/medium_nested_list.svg)
@@ -1195,7 +1195,7 @@ plant biomass is higher).
 Produce the treemap visualization like this: 
 
 ```commandline
-python3 treemap.py data/ocean-biomass.json 600 600
+python3 treemap.py data/Biomass/ocean-biomass.json 600 600
 ```
 
 ![Surprising balance of biomass in the ocean](
@@ -1255,7 +1255,7 @@ Explore some available data sets and design Python programs to
 convert tabular data into nested JSON structures for
 treemapping.  Can you create some general conversions that
 are applicable to many different available data sets?
-You may wish to use `structure/structure.py`, the program that
+You may wish to use `restructure/structure.py`, the program that
 produced `data/majors-23F.json`, as a starting point.
 
 ### [Robust input handling](RobustTreemaps.md)

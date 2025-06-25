@@ -49,7 +49,10 @@ def to_css(table: dict[str, tuple[str, str]]) -> str:
     result: list[str] = []  # build as a list, then join when we return
     LB, RB = "{", "}"
     for key, (background, text) in table.items():
-        result.append(f".{key} {LB} fill: {background}; color: {text}; {RB}")
+        # Note the "fill" attribute applies to text color as well as rectangle color in SVG,
+        # so we need an extra entry to specify text color in text elements
+        result.append(f".{key} {LB} fill: {background}; {RB}")
+        result.append(f".{key} text {LB} fill: {text}; {RB}")
     return "\n".join(result)
 
 def main():
