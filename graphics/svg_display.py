@@ -31,7 +31,10 @@ CSS_PROLOGUE = """"
             font-family: Helvetica, Arial, sans-serif;
             font-size: 12pt;
             white-space: pre-wrap; 
+            /* color: black;  NOT FOR SVG */
+            fill: black;   /* SVG uses 'fill' instead of 'color' for text color */
     }
+    .tile-label text { fill: black; }
     tspan { white-space: pre-wrap; }
     .tile_label_white { fill: white;  white-space: pre-wrap; }
     .tile_label_black { fill: black;   white-space: pre-wrap; }
@@ -60,6 +63,7 @@ def init(width: int, height: int, svg_path: str = None):
     """
     global SVG_HEAD
     global SVG_BUFFER
+    global CSS_BUFFER
     global SVG_OUT
     global WIDTH
     global HEIGHT
@@ -75,16 +79,9 @@ def init(width: int, height: int, svg_path: str = None):
         log.error(f"Could not open SVG file {svg_path}")
         sys.exit(1)
 
-    css = options.get("css_file", False)
-    if css:
+    if "css" in options:
         IS_STYLED = True
-        try:
-            css_file = open(css, "r")
-            for line in css_file:
-                CSS_BUFFER.append(line.strip())
-        except FileNotFoundError:
-            log.error(f"Could not open style file {css}")
-            sys.exit(1)
+        CSS_BUFFER += options["css"]
 
 
 def xml_escape(s: str) -> str:
@@ -221,10 +218,16 @@ def draw_label(label: str, llx: int, lly: int, urx: int, ury: int,
     # Also a label in the rectangle if it fits
     if options["messy"] or label_fits(label, llx, lly, urx, ury):
         label = label.replace('\n', f'</tspan><tspan x="{center_x}" dy="1.2em">')
+        if IS_STYLED:
+            label_class = "tile_label"
+        else:
+            label_class = f'tile_label_{properties["label_color"]}'
         SVG_BUFFER.append(
-            f"""<text x="{center_x}"  y="{center_y}"
-             class="tile_label_{properties["label_color"]}" ><tspan>{label}</tspan></text>
-          """)
+            f"""<text x="{center_x}"  y="{center_y}" class="{label_class}">
+              <tspan>{label}</tspan>
+            </text>
+            """)
+
 
 def close():
     # Assemble the output SVG file from
