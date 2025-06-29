@@ -27,17 +27,16 @@ SVG_HEAD = "uninitialized"  # Set in 'init' with height and width
 CSS_PROLOGUE = """"
    <defs>
    <style>
-    text {  text-anchor: middle;  
+   .tile rect { fill: white;  stroke: grey; }
+   .tile_label {
+            text-anchor: middle;  
             font-family: Helvetica, Arial, sans-serif;
             font-size: 12pt;
             white-space: pre-wrap; 
-            /* color: black;  NOT FOR SVG */
             fill: black;   /* SVG uses 'fill' instead of 'color' for text color */
     }
-    .tile-label text { fill: black; }
-    tspan { white-space: pre-wrap; }
-    .tile_label_white { fill: white;  white-space: pre-wrap; }
-    .tile_label_black { fill: black;   white-space: pre-wrap; }
+    .tile_label_white { fill: white;   }
+    .tile_label_black { fill: black;  }
     .group_outline { stroke: red; fill: white; stroke-width: 1; }
     .group_outline:hover { fill: red; }
 """
@@ -94,7 +93,7 @@ def xml_escape(s: str) -> str:
 LBRACE = "{"
 RBRACE = "}"
 
-def draw_rect(llx, lly, urx, ury, properties: dict):
+def draw_tile(llx, lly, urx, ury, properties: dict):
     """Generate display directions for a tile in SVG rendering.
     Includes labeling the rectangle, in text or as a tool-tip.
     """
@@ -111,7 +110,7 @@ def draw_rect(llx, lly, urx, ury, properties: dict):
         f"""\n<g class="{css_class}"><rect x="{llx + margin}" y="{lly + margin}" 
          width="{width}"  height="{height}"
          rx="10"  
-         class="{css_class}" />
+         class="tile {css_class}" />
       """)
     if "label" in properties:
         # Label is associated with group that wraps rect, so that
