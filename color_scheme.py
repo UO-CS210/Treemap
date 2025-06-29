@@ -44,16 +44,18 @@ def read_color_scheme_file(csv_file: io.IOBase) -> dict[str, tuple[str, str]]:
 #  a .csv file, so that we can have consistency between Tk and SVG
 #  color schemes.
 #
-def to_css(table: dict[str, tuple[str, str]]) -> str:
-    """Convert a color scheme table into a CSS stylesheet."""
-    result: list[str] = []  # build as a list, then join when we return
+def to_css(table: dict[str, tuple[str, str]]) -> list[str]:
+    """Convert a color scheme table into a CSS stylesheet,
+    returned as if it had been read from file with readlines()
+    """
+    result: list[str] = []
     LB, RB = "{", "}"
     for key, (background, text) in table.items():
         # Note the "fill" attribute applies to text color as well as rectangle color in SVG,
         # so we need an extra entry to specify text color in text elements
         result.append(f".{key} {LB} fill: {background}; {RB}")
         result.append(f".{key} text {LB} fill: {text}; {RB}")
-    return "\n".join(result)
+    return result
 
 def main():
     """Can be run as a filter script that converts CSV on input to CSS on output."""
