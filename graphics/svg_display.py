@@ -34,8 +34,8 @@ CSS_PROLOGUE = """"
             font-size: 12pt;
             white-space: pre-wrap; 
     }
-    .group_outline { stroke: red; fill: white; stroke-width: 1; }
-    .group_outline:hover { fill: red; }
+    .group_outline { stroke: grey; fill: white; stroke-width: 2; }
+    .group_outline:hover { stroke: red; fill: red; stroke-width: 8; }
 """
 CSS_BUFFER: list[str] = []
 CSS_EPILOGUE   = """
@@ -46,7 +46,6 @@ SVG_BUFFER: list[str] = []
 SVG_EPILOGUE = "\n</svg>"
 
 
-SVG_OUT: io.BytesIO | None = None
 WIDTH = 0
 HEIGHT = 0
 IS_STYLED = False  # Is there a user-supplied CSS file, or do we need to randomly generate colors?
@@ -59,7 +58,6 @@ def init(width: int, height: int, svg_path: str = None):
     global SVG_HEAD
     global SVG_BUFFER
     global CSS_BUFFER
-    global SVG_OUT
     global WIDTH
     global HEIGHT
     global IS_STYLED
@@ -96,11 +94,12 @@ def draw_tile(r: Rectangular):
     ((llx, lly), (urx, ury)) = r.box
     width = max(1, (urx - llx - 2 * MARGIN))
     height = max(1, (ury - lly - 2 * MARGIN))
+    key = xml_escape(r.key)
     SVG_BUFFER.append(
-        f"""\n<g class="{r.key}"><rect x="{llx + MARGIN}" y="{lly + MARGIN}" 
+        f"""\n<g class="{key}"><rect x="{llx + MARGIN}" y="{lly + MARGIN}" 
          width="{width}"  height="{height}"
          rx="10"  
-         class="tile {r.key}" />
+         class="tile {key}" />
       """)
     if r.label:
         # Label is associated with group that wraps rect, so that
@@ -110,8 +109,8 @@ def draw_tile(r: Rectangular):
     # If we haven't been given a custom CSS file, we'll fill in colors
     # that match the Tk rendering (which currently are randomly generated)
     if not IS_STYLED:
-        CSS_BUFFER.append(f""".{r.key}  {LBRACE} fill: {r.fill_color}; {RBRACE}""")
-        CSS_BUFFER.append(f"""text.{r.key} {LBRACE} fill: {r.label_color}; {RBRACE}""")
+        CSS_BUFFER.append(f""".{key}  {LBRACE} fill: {r.fill_color}; {RBRACE}""")
+        CSS_BUFFER.append(f"""text.{key} {LBRACE} fill: {r.label_color}; {RBRACE}""")
     SVG_BUFFER.append("</g>")
 
 
@@ -173,11 +172,11 @@ def draw_label(r):
     ((llx, lly), (urx, ury)) = r.box
     center_x = (urx + llx) // 2
     center_y = (lly + ury) // 2
-    label = r.label
 
     # If a label contains special HTML/XML characters, they must be escaped,
     # and newlines should break the text into parts
-    label = xml_escape(label)
+    label = xml_escape(r.label)
+    key = xml_escape(r.key)
 
     # Let's make a title element (tool tip) regardless
     # (even when it duplicates the label)
@@ -190,28 +189,20 @@ def draw_label(r):
     if display_options.messy or label_fits(label, llx, lly, urx, ury):
         label = label.replace('\n', f'</tspan><tspan x="{center_x}" dy="1.2em">')
         SVG_BUFFER.append(
-            f"""<text x="{center_x}"  y="{center_y}" class="tile_label {r.key}">
+            f"""<text x="{center_x}"  y="{center_y}" class="tile_label {key}">
               <tspan>{label}</tspan>
             </text>
             """)
         # Note text style was inserted in draw_tile already
 
 
-
 def close():
-    # Assemble the output SVG file from
-    # these parts, in this order
-    #   - SVG header
-    #   - CSS prologue
-    #   - CSS entries buffer, which we build up incrementally as we build the structure
-    #   - CSS epilogue
-    #   - SVG entries buffer, which we build up incrementally with 1-1 correspondence to CSS entries
-    #   - SVG epilogue
-    log.info(f"Saving SVG representation as {SVG_OUT.name}")
-    SVG_OUT.write(SVG_HEAD)
-    SVG_OUT.write(CSS_PROLOGUE)
-    SVG_OUT.write("\n".join(CSS_BUFFER))
-    SVG_OUT.write(CSS_EPILOGUE)
-    SVG_OUT.write("\n".join(SVG_BUFFER))
-    SVG_OUT.write(SVG_EPILOGUE)
-    SVG_OUT.close()
+    pass
+
+def content() -> list[str]:
+    # Assemble the output SVG file from parts
+    log.info(f"Combining parts of SVG representation")
+    return ( SVG_HEAD
+             + CSS_PROLOGUE  + "\n".join(CSS_BUFFER) + CSS_EPILOGUE
+             + "\n".join(SVG_BUFFER)
+             + SVG_EPILOGUE )

@@ -132,6 +132,9 @@ def normalize_key(key: str) -> str:
     chars = [ch for ch in basis if ch.isalnum()]
     return "".join(chars)
 
+def svg_content() -> list[str]:
+    """Contents of the SVG representation"""
+    return svg.content()
 
 def wait_close():
     """Hold display on screen until user indicates finish"""

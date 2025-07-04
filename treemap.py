@@ -16,6 +16,7 @@ import webbrowser  # To display the SVG version
 
 import color_scheme
 import mapper
+import display
 from graphics import display_options as options
 
 
@@ -64,8 +65,14 @@ def main():
     values = json.load(args.input)
     mapper.treemap(values, args.width, args.height)
     svg_path = pathlib.Path(args.svg).resolve()
-    print(f"SVG output written to {svg_path}")
-    webbrowser.open(f"file:{svg_path}")
+    try:
+        svg_out = open(svg_path, "w")
+        for line in display.svg_content():
+            svg_out.write(line)
+        print(f"SVG output written to {svg_path}")
+        webbrowser.open(f"file:{svg_path}")
+    except Exception as e:
+        print(f"SVG output to {svg_path} failed: {e}")
 
 
 
