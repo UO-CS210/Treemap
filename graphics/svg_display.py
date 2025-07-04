@@ -1,11 +1,11 @@
 """SVG display of Treemap"""
 import io
 import sys
-from idlelib.debugobj_r import remote_object_tree_item
-from token import LBRACE
 
-from graphics.tk_display import LINE_HEIGHT_APPROX
-from treemap_options import options
+
+from .gr_display import Rectangular
+from .tk_display import LINE_HEIGHT_APPROX  #FIXME: factor out of sibling module
+from . import display_options
 
 import logging
 logging.basicConfig()
@@ -21,7 +21,7 @@ log.setLevel(logging.DEBUG)
 #   - SVG entries buffer, which we build up incrementally with 1-1 correspondence to CSS entries
 #   - SVG epilogue
 
-
+MARGIN = 3
 
 SVG_HEAD = "uninitialized"  # Set in 'init' with height and width
 CSS_PROLOGUE = """"
@@ -33,10 +33,7 @@ CSS_PROLOGUE = """"
             font-family: Helvetica, Arial, sans-serif;
             font-size: 12pt;
             white-space: pre-wrap; 
-            fill: black;   /* SVG uses 'fill' instead of 'color' for text color */
     }
-    .tile_label_white { fill: white;   }
-    .tile_label_black { fill: black;  }
     .group_outline { stroke: red; fill: white; stroke-width: 1; }
     .group_outline:hover { fill: red; }
 """
@@ -52,7 +49,6 @@ SVG_EPILOGUE = "\n</svg>"
 SVG_OUT: io.BytesIO | None = None
 WIDTH = 0
 HEIGHT = 0
-ELIDE_WIDE_LABELS = False  # This really belongs in a configuration file
 IS_STYLED = False  # Is there a user-supplied CSS file, or do we need to randomly generate colors?
 
 
@@ -68,7 +64,6 @@ def init(width: int, height: int, svg_path: str = None):
     global HEIGHT
     global IS_STYLED
     WIDTH, HEIGHT = width, height
-    SVG_HEAD = f"""<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" >"""
     if not svg_path:
         svg_path = "treemap.svg"
     try:
@@ -78,9 +73,10 @@ def init(width: int, height: int, svg_path: str = None):
         log.error(f"Could not open SVG file {svg_path}")
         sys.exit(1)
 
-    if "css" in options:
-        IS_STYLED = True
-        CSS_BUFFER += options["css"]
+    SVG_HEAD = f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}">'
+    if display_options.css:
+            IS_STYLED = True
+            CSS_BUFFER += display_options.css
 
 
 def xml_escape(s: str) -> str:
@@ -93,69 +89,45 @@ def xml_escape(s: str) -> str:
 LBRACE = "{"
 RBRACE = "}"
 
-def draw_tile(llx, lly, urx, ury, properties: dict):
+def draw_tile(r: Rectangular):
     """Generate display directions for a tile in SVG rendering.
     Includes labeling the rectangle, in text or as a tool-tip.
     """
-    margin = properties["margin"]
-    if "label" in properties:
-        css_class = gen_class_name(properties["label"])
-    elif "class" in properties:
-        css_class = gen_class_name(properties["class"])
-    else:
-        css_class = "tile"
-    width = max(1, (urx - llx - 2 * margin))
-    height = max(1, (ury - lly - 2 * margin))
+    ((llx, lly), (urx, ury)) = r.box
+    width = max(1, (urx - llx - 2 * MARGIN))
+    height = max(1, (ury - lly - 2 * MARGIN))
     SVG_BUFFER.append(
-        f"""\n<g class="{css_class}"><rect x="{llx + margin}" y="{lly + margin}" 
+        f"""\n<g class="{r.key}"><rect x="{llx + MARGIN}" y="{lly + MARGIN}" 
          width="{width}"  height="{height}"
          rx="10"  
-         class="tile {css_class}" />
+         class="tile {r.key}" />
       """)
-    if "label" in properties:
+    if r.label:
         # Label is associated with group that wraps rect, so that
         # it can be rendered as either <title> or <text> depending
         # on available space
-        draw_label(properties["label"], llx, lly, urx, ury, properties)
+        draw_label(r)
     # If we haven't been given a custom CSS file, we'll fill in colors
     # that match the Tk rendering (which currently are randomly generated)
     if not IS_STYLED:
-        CSS_BUFFER.append(f"""
-            .{css_class}  {LBRACE} 
-                fill: {properties["fill_color"]} ;
-                color: {properties["label_color"]};
-            {RBRACE}
-        """)
+        CSS_BUFFER.append(f""".{r.key}  {LBRACE} fill: {r.fill_color}; {RBRACE}""")
+        CSS_BUFFER.append(f"""text.{r.key} {LBRACE} fill: {r.label_color}; {RBRACE}""")
     SVG_BUFFER.append("</g>")
 
-def gen_class_name(label: str) -> str:
-    """Extract a suitable and predictable  CSS class name from a label.
-    We keep first line, replacing spaces by underscores and removing
-    other punctuation.
-    """
-    basis = label.split()[0]
-    if not basis[0].isalpha():
-        basis = "C_" + basis
-    chars = [ch for ch in basis if ch.isalnum()]
-    return "".join(chars)
 
 
-def begin_group(label: str | None,
-                    llx: int, lly: int, urx: int, ury: int,
-                    properties: dict):
-    margin = properties["margin"]
-    if label:
-        group_label = f"<title>{xml_escape(label)}</title>"
-        group_class = gen_class_name(label)
-    else:
-        group_label = ""
+
+def begin_group(r: Rectangular):
+    ((llx, lly), (urx, ury)) = r.box
+    width = max(1, (urx - llx - 2 * MARGIN))
+    height = max(1, (ury - lly - 2 * MARGIN))
     SVG_BUFFER.append(
-        f"""
-        <g class="group {group_class}">{group_label}
-            <rect x="{llx + margin}" y="{lly + margin}" 
-            width="{urx - llx - 2 * margin}"  height="{ury - lly - 2 * margin}"
+        f"""<g class="group {r.key}">
+            <rect x="{llx + MARGIN}" y="{lly + MARGIN}" 
+            width="{width}"  height="{height}"
             rx="5"  
             class="group_outline" />
+        <title>{r.label}</title> 
         """
     )
 
@@ -192,16 +164,16 @@ def label_fits(label: str, llx: int, lly: int, urx: int, ury: int) -> bool:
     return True
 
 
-def draw_label(label: str, llx: int, lly: int, urx: int, ury: int,
-               properties: dict):
+def draw_label(r):
     """Generate display directions for a label in SVG rendering.
     May be rendered as <text> or <title> depending on available space, so
     make sure there is an element (e.g., a <g>...</g>) to attach the
     title to.
     """
+    ((llx, lly), (urx, ury)) = r.box
     center_x = (urx + llx) // 2
     center_y = (lly + ury) // 2
-
+    label = r.label
 
     # If a label contains special HTML/XML characters, they must be escaped,
     # and newlines should break the text into parts
@@ -215,17 +187,15 @@ def draw_label(label: str, llx: int, lly: int, urx: int, ury: int,
     SVG_BUFFER.append(f"""<title>{title}</title>""")
 
     # Also a label in the rectangle if it fits
-    if options["messy"] or label_fits(label, llx, lly, urx, ury):
+    if display_options.messy or label_fits(label, llx, lly, urx, ury):
         label = label.replace('\n', f'</tspan><tspan x="{center_x}" dy="1.2em">')
-        if IS_STYLED:
-            label_class = "tile_label"
-        else:
-            label_class = f'tile_label_{properties["label_color"]}'
         SVG_BUFFER.append(
-            f"""<text x="{center_x}"  y="{center_y}" class="{label_class}">
+            f"""<text x="{center_x}"  y="{center_y}" class="tile_label {r.key}">
               <tspan>{label}</tspan>
             </text>
             """)
+        # Note text style was inserted in draw_tile already
+
 
 
 def close():

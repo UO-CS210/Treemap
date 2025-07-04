@@ -11,10 +11,13 @@
 
 import json    # Acquire data to be mapped in JSON exchange format  (see https://www.json.org)
 import argparse
+import pathlib     # To convert path argument to a full path for SVG file
+import webbrowser  # To display the SVG version
 
 import color_scheme
 import mapper
-from treemap_options import options
+from graphics import display_options as options
+
 
 def cli() -> object:
     """Obtain input file and options from the command line.
@@ -29,6 +32,9 @@ def cli() -> object:
     # User-provided CSS file to style the SVG output?  (Applies to SVG only)
     parser.add_argument("--css", help="CSS file to use for SVG",
                         nargs="?", default=None, type=argparse.FileType("r"))
+    # Path for output SVG file, defaults to "treemap.svg"
+    parser.add_argument("--svg", help="Path to SVG file",
+                        nargs="?", default="treemap.svg", type=str, required=False)
     # Suppress long labels? (Applies to SVG only for now)
     parser.add_argument("-m", "--messy", help="Include labels that are too big for their tiles",
                          action="store_true")
@@ -41,13 +47,13 @@ def cli() -> object:
 
     #  Options communicated through treemap_options
     if args.css:
-        options["css"] = args.css.readlines()
+        options.css = args.css.readlines()
         # Implemented only by SVG output
     if args.colors:
-        options["colors"] = color_scheme.read_color_scheme_file(args.colors)
+        colors = color_scheme.read_color_scheme_file(args.colors)
         if not args.css:
-            options["css"] = color_scheme.to_css(options["colors"])
-    options["messy"] = args.messy
+            options.css = color_scheme.to_css(options.color_scheme)
+    options.messy = args.messy
 
     return args
 
@@ -57,6 +63,10 @@ def main():
     args = cli()
     values = json.load(args.input)
     mapper.treemap(values, args.width, args.height)
+    svg_path = pathlib.Path(args.svg).resolve()
+    print(f"SVG output written to {svg_path}")
+    webbrowser.open(f"file:{svg_path}")  # FIXME: path to file
+
 
 
 if __name__ == "__main__":

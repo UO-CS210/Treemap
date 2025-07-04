@@ -8,13 +8,14 @@ Keeping these options as a dict rather than a set of individual variables makes 
 check whether an option has been set at all.
 
 Usage:
-from treemap_options import options
+import treemap_options as options
 ...
-if options.get(prop_name, False):
-    # this code executed only if prop_name exists AND has a truthy value
-
+if options.prop_name:
+    # Code to execute if property has a truthy value
 """
 
-options = { # Non-default values set by treemap.py or other main program
-}
+
+color_scheme: dict[str, tuple[str, str]] = {}    # Maps class name to (fill, text) color pair
+css: str | None = None
+messy: bool = False
 
