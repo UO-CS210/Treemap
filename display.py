@@ -98,7 +98,7 @@ def begin_group(r: geometry.Rect,
     it will be displayed as a tooltip in SVG.
     """
     global INCLUSION_STACK
-    INCLUSION_STACK.append(key)  # FIXME: Whoops, do we need the random color on the stack?
+    INCLUSION_STACK.append(key)
     fill_color, label_color = lookup_colors(key)
     if value:
         label = f"{key}: {value}"
