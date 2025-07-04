@@ -65,7 +65,7 @@ def main():
     mapper.treemap(values, args.width, args.height)
     svg_path = pathlib.Path(args.svg).resolve()
     print(f"SVG output written to {svg_path}")
-    webbrowser.open(f"file:{svg_path}")  # FIXME: path to file
+    webbrowser.open(f"file:{svg_path}") 
 
 
 
