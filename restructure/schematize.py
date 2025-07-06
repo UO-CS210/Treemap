@@ -45,9 +45,17 @@ def parse_schema(schema_file: io.IOBase) -> dict[str, list[str]]:
     expressed as json.
     """
     map = { }
-    json_text = schema_file.read()
-    schema = json.loads(json_text)
-    log.debug(f"Schema: \n{schema}")
+    try:
+        json_text = schema_file.read()
+    except Exception as e:
+        log.error(f"Failed to read schema from file {schema_file}")
+        exit(1)
+    try:
+        schema = json.loads(json_text)
+        log.debug(f"Schema: \n{schema}")
+    except Exception as e:
+        log.error(f"Failed to parse schema from file {schema_file}")
+        exit(1)
     assert isinstance(schema, list), f"Schema should be a list of dictionaries"
 
     def build_chains(prefix: list[str], element):
