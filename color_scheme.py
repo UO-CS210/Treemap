@@ -9,12 +9,27 @@ A color scheme can be used for:
 import sys
 import csv
 import io
+import argparse
 import logging
-import color_contrast
+
 
 logging.basicConfig()
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
+
+
+def cli() -> argparse.Namespace:
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser("Convert color table in CSV format to CSS stylesheet")
+    parser.add_argument("input", help="Input CSV file with color scheme.",
+                        type=argparse.FileType("r", encoding="utf-8"), nargs="?",
+                        default=sys.stdin)
+    parser.add_argument("output", help="Output CSS stylesheet file.",
+                        type=argparse.FileType("w", encoding="utf-8"), nargs="?",
+                        default=sys.stdout)
+    args = parser.parse_args()
+    return args
+
 
 # Color scheme is represented as a dict, str -> tuple[str, str]
 # e.g.  {"animals": ("#454532", "white"),
@@ -35,15 +50,12 @@ def read_color_scheme_file(csv_file: io.IOBase) -> dict[str, tuple[str, str]]:
     for row in reader:
         # Comment lines may have just one cell or start with #
         if len(row) < 3 or not row[2] or row[0].startswith("#"):
-            log.debug(r"Skipping record {row}")
+            log.debug(f"Skipping record {row}")
             continue
         result[row[0]] = (row[1], row[2])
     return result
 
-#  Can be run as a main program to produce a .css file from
-#  a .csv file, so that we can have consistency between Tk and SVG
-#  color schemes.
-#
+
 def to_css(table: dict[str, tuple[str, str]]) -> list[str]:
     """Convert a color scheme table into a CSS stylesheet,
     returned as if it had been read from file with readlines()
@@ -57,15 +69,19 @@ def to_css(table: dict[str, tuple[str, str]]) -> list[str]:
         result.append(f".{key} text {LB} fill: {text}; {RB}")
     return result
 
+#  Can be run as a main program to produce a .css file from
+#  a .csv file, so that we can have consistency between Tk and SVG
+#  color schemes.
+#
 def main():
     """Can be run as a filter script that converts CSV on input to CSS on output."""
-    log.info("Reading color scheme from standard input")
-    table = read_color_scheme_file(sys.stdin)
+    args = cli()
+    table = read_color_scheme_file(args.input)
+    args.input.close()
     css = to_css(table)
-    sys.stdout.write(css)
-    print()  # Ending newline
-    sys.stdout.flush()
-    sys.stdout.close()
+    for line in css:
+        print(line, file=args.output)
+    args.output.close()
 
 if __name__ == "__main__":
     main()
