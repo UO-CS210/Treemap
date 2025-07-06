@@ -35,7 +35,7 @@ CSS_PROLOGUE = """"
             white-space: pre-wrap; 
     }
     .group_outline { stroke: grey; fill: white; stroke-width: 2; }
-    .group_outline:hover { stroke: red; fill: red; stroke-width: 8; }
+    .group_outline:hover { stroke: red; fill: red; stroke-width: 20; }
 """
 CSS_BUFFER: list[str] = []
 CSS_EPILOGUE   = """
