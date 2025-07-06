@@ -51,7 +51,7 @@ def cli() -> object:
         options.css = args.css.readlines()
         # Implemented only by SVG output
     if args.colors:
-        colors = color_scheme.read_color_scheme_file(args.colors)
+        options.color_scheme = color_scheme.read_color_scheme_file(args.colors)
         if not args.css:
             options.css = color_scheme.to_css(options.color_scheme)
     options.messy = args.messy
