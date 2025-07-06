@@ -49,6 +49,7 @@ def lookup_colors(key: str) -> tuple[str, str]:
     # we are coloring a group, and so we will use the same color if we encounter
     # the same key again.   Exception:  None or "" don't get an assigned color,
     # and don't propagate to parts.
+    log.warning(f"Could not find color for key {key}")
     fill, text = color_contrast.next_color()
     if key:
         options.color_scheme[key] = (fill, text)
