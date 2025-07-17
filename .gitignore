@@ -1,3 +1,7 @@
+# Confidential data sources
+data/CS-rosters
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

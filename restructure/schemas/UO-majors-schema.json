@@ -12,26 +12,28 @@
       "FR", "FREN", "GER", "RL",  "SPAN"
     ],
     "NatSci": [
-      "PSY", "HPHY",
+      {"pre-med": ["HPHY", "BI", "BIC", "NEUR"]},
+      "PSY",
       "PHYS",
       "MSCI",
       "MATH",
-      "BI", "BIC", "CH",
-      "NEUR", "GEOL",
+      "CH",
+      ["GEOL", "ERTH"],
       "MARB", "GS",
-      "ESCI", "ERTH",
+      "ESCI",
       "PEN"
     ],
     "SocSci": [
+      {"Geography":  ["GEOG", "SDSC"]},
       "ANTH", "ENV", "HIST", "HUM",
-      "PS", "GEOG", "GLBL", "SDSC",
+      "PS",  "GLBL",
       "EC", "GSS", "INTL", "PINS",
-      "SDSC", "ETHN", "FLR",
+      "ETHN", "FLR",
       "LING", "NAIS",
       "SOC", "WGS", "WGSS"
     ],
     "Hum": [
-      "REl", "ENG", "CLAS", "FPC",
+      "ENG", "CLAS", "FPC",
       "CINE", "COLT",  "MDVL", "TA", "PHIL", "REL"
     ]
   },

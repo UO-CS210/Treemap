@@ -1,12 +1,47 @@
 # Beyond Treemaps: Project Ideas
 
 There are many other ways to extend this project.  Here are a few.  
-These are _much_ more challenging than completing the project.  They are 
-not little "extra credit" extensions, but rather full-blown projects 
-on their own.  If you 
+Some of these are _much_ more challenging than completing the project.
+They are not little "extra credit" extensions, but rather
+full-blown projects on their own.  If you 
 want to tackle one of them, I suggest first trying to devise a plan 
 of attack on your own, and then discussing it with your instructor 
 before diving in. 
+
+## Ordered squarified treemaps
+
+Consider the treemap illustration from
+[an article in 2026-06-25 issue of the New York Times](
+https://www.nytimes.com/interactive/2025/06/22/upshot/harvard-funding-cuts.html)
+on research funding cuts at Harvard.
+
+![Harvard research grants cancelled](img/NYT-harvard.png)
+
+This treemap is "squarified" like ours, but notice how the regions 
+are also ordered top-to-bottom, left-to-right by total size.  
+
+- What would you need to change in `mapper.py` to order a squarified 
+  treemap in this way? 
+
+- If you made ordering _optional_ (otherwise presenting data in the 
+  order it appears in the source file), what is the cleanest* way to 
+  control that option?   You will need new option in the top-level 
+  `treemap.py` source file;  how would you convey that option to the 
+  part of `mapper.py` that either does or does not sort regions by 
+  size? 
+
+_*_ _clean_ is a property of great importance to software developers,
+although it is not easy to define unambiguously.   Consider the 
+extent to which adding and conveying this option makes other parts 
+of the code _messy_, i.e., full of extraneous detail that interferes 
+with understanding and maintenance.  A _clean_ approach minimizes 
+complexity and facilitates future changes.  Adding one feature in a 
+_clean_ way may not look much different than adding that feature in 
+a messy or _hacky_ way, but consider what happens if you add seven 
+features in a similar manner.  In a _clean_ approach, each feature 
+adds only a tiny bit of extra complexity, while a _messy_ approach 
+grows into a distracting pile or, worse, a tangle of interacting 
+features. 
 
 ## Custom text formatting
 

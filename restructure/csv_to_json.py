@@ -69,7 +69,7 @@ def load_schema(schema_file: io.IOBase) -> dict[str, list[str]]:
     assert isinstance(schema, dict), f"Schema should be a dict with entries 'labels' and 'data'"
     return schema
 
-nest = list[int] | dict[str, 'nest']
+nest = list[int] | dict[str, 'items']
 
 def insert(values: list[int], path: list[str], structure: dict):
     """Insert as value as structure[p1][p2][...][key] where pi are elements of path"""
@@ -109,7 +109,7 @@ def coerce_by_guessing(values: list) -> object:
 
 
 def unflatten(flat: io.IOBase, schema: dict[str, list[str]]) -> dict:
-    """Reshape in_csv CSV file into tree structure represented as nest of dictionaries.
+    """Reshape in_csv CSV file into tree structure represented as items of dictionaries.
     Rows that go in the tree are those with content in the data columns.
     Each label column is "sticky", i.e., when a column is empty, we assume it is a duplicate
     of the last non-empty value in that column, whether or not the previous row had

@@ -45,15 +45,25 @@ def parse_schema(schema_file: io.IOBase) -> dict[str, list[str]]:
     expressed as json.
     """
     map = { }
-    json_text = schema_file.read()
-    schema = json.loads(json_text)
-    log.debug(f"Schema: \n{schema}")
+    try:
+        json_text = schema_file.read()
+    except Exception as e:
+        log.error(f"Failed to read schema from file {schema_file}")
+        exit(1)
+    try:
+        schema = json.loads(json_text)
+        log.debug(f"Schema: \n{schema}")
+    except Exception as e:
+        log.error(f"Failed to parse schema from file {schema_file}")
+        exit(1)
     assert isinstance(schema, list), f"Schema should be a list of dictionaries"
 
     def build_chains(prefix: list[str], element):
         """Build chains from this element downward through structure"""
         log.debug(f"Tracing ancestor chain {prefix} through {element}")
         if isinstance(element, str):
+            if element in map:
+                log.warning(f"{element} appears as {prefix} and also as {map[element]}, ignoring latter")
             map[element] = prefix.copy()
             log.debug(f"Added {element}: {prefix} to map")
         elif isinstance(element, list):
@@ -128,7 +138,7 @@ def load_labeled(flat: io.IOBase, keys: str, values: str) -> list[tuple[str, int
 
 
 def reshape(pairs: list[tuple[str, int]], paths: dict[str, list[str]]) -> dict:
-    """Reshape in_csv CSV file into tree structure represented as nest of dictionaries."""
+    """Reshape in_csv CSV file into tree structure represented as items of dictionaries."""
     structure = {}
     for key, value in pairs:
         if key in paths:

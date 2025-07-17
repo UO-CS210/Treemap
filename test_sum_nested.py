@@ -11,7 +11,7 @@ class TestSumNested(unittest.TestCase):
     """Case breakdown:
     1. An individual integer (base case)
     2. An individual (string, int) pair (base case)
-    3. An individual (string, nest) pair (recursive case, sum nest)
+    3. An individual (string, items) pair (recursive case, sum items)
     4. A list  (recursive case, combine sums)
     5. A dict (recursive case, combine dicts)
     """
