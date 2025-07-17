@@ -62,6 +62,8 @@ def parse_schema(schema_file: io.IOBase) -> dict[str, list[str]]:
         """Build chains from this element downward through structure"""
         log.debug(f"Tracing ancestor chain {prefix} through {element}")
         if isinstance(element, str):
+            if element in map:
+                log.warning(f"{element} appears as {prefix} and also as {map[element]}, ignoring latter")
             map[element] = prefix.copy()
             log.debug(f"Added {element}: {prefix} to map")
         elif isinstance(element, list):
@@ -136,7 +138,7 @@ def load_labeled(flat: io.IOBase, keys: str, values: str) -> list[tuple[str, int
 
 
 def reshape(pairs: list[tuple[str, int]], paths: dict[str, list[str]]) -> dict:
-    """Reshape in_csv CSV file into tree structure represented as nest of dictionaries."""
+    """Reshape in_csv CSV file into tree structure represented as items of dictionaries."""
     structure = {}
     for key, value in pairs:
         if key in paths:

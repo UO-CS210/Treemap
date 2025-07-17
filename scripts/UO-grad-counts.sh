@@ -42,7 +42,7 @@ VISUALIZE="treemap.py"
 
 # ------------------------------------------------------------
 #  Step 1:  Restructure CSV of individual major codes and counts
-#  into a hierarchy (a "nest" in our Python program) represented
+#  into a hierarchy (a "items" in our Python program) represented
 #  as a JSON file.
 #  Also create a version sorted from largest to smallest groups.
 # -------------------------------------------------------------

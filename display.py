@@ -36,16 +36,18 @@ INCLUSION_STACK: list[str] = []  # Initially empty
 #       init(width: int, height: int):
 #           Creates the display (Tk visible and SVG buffer) with width and height in pixels
 #
-#       draw_tile(r: geometry.Rect,
-#               key: str | None = None,
-#               value: object = None):
-#           Draws a tile.  The tile is labeled with key (string) and/or value (usually numeric).
+#           def draw_tile(r: geometry.Rect,
+#                   key: object = None,
+#                   value: object = None):
+#           Draws a tile.  The tile is labeled with key (usually a string) and/or value (usually numeric).
 #           If provided, the key will be normalized to conform to SVG/CSS naming rules and may be mapped to a color
 #           in graphics.display_options.color_scheme (usually from a CSV file via color_scheme.py)
 #           or associated with CSS styling through graphics.display_options.css.
 #           Example normalization of keys to CSS class identifiers:
 #               "dogs" -> "dogs",
 #               "99 problems & 32 solutions" -> "C_99problems32solutions"
+#               0x10 -> "C_16"
+#
 #           A color may be inherited from an enclosing group.  If there is no associated color
 #           for the key or any enclosing group, a random color (and contrasting label color)
 #           will be generated.
@@ -83,7 +85,7 @@ def init(width: int, height: int):
 
 
 def draw_tile(r: geometry.Rect,
-              key: str | None = None,
+              key: object = None,
               value: object = None):
     """Draw the tile (on both media).
      Displays on Tk (Python built-in graphics) and
@@ -98,11 +100,11 @@ def draw_tile(r: geometry.Rect,
     # fill_color and label_color will be used in tk graphics,
     # and also in SVG graphics ONLY if the user hasn't provided a CSS stylesheet
     if value and key:
-        label = f"{key}: {value}"
+        label = f"{key}\n{value}"
     elif value:
         label = f"{value}"
     elif key:
-        label = key
+        label = str(key)
     else:
         label = ""
     # For everything else, we need the key normalized
@@ -161,8 +163,6 @@ def wait_close():
 #  Internal functions, not part of API
 # --------------------------------------------------------------
 
-
-
 def lookup_colors(key: str) -> tuple[str, str]:
     """Finds nearest color for key or enclosing key on inclusion stack."""
     if key in options.color_scheme:
@@ -175,20 +175,21 @@ def lookup_colors(key: str) -> tuple[str, str]:
     # we are coloring a group, and so we will use the same color if we encounter
     # the same key again.   Exception:  None or "" don't get an assigned color,
     # and don't propagate to parts.
-    log.warning(f"Could not find color for key {key}")
+    log.info(f"Could not find color for key {key}; a random color will be assigned.")
     fill, text = color_contrast.next_color()
     if key:
         options.color_scheme[key] = (fill, text)
     return fill, text
 
 
-def normalize_key(key: str) -> str:
+def normalize_key(key: object) -> str:
     """Extract a suitable and predictable key from a category name.
     We extract as first line, replacing spaces by underscores, and
     removing any other non-alphanumeric characters.
     The result is usable as a dict key (for Tk color schemes)
      and CSS classes (to use in the SVG output).
     """
+    key = str(key)
     basis = key.split()[0]
     if not basis[0].isalpha():
         basis = "C_" + basis

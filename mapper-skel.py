@@ -42,7 +42,7 @@ def treemap(values: list[Real], width: int, height: int):
 
 
 def layout(items: list[Real], rect: geometry.Rect):
-    """Lay elements of nest out in rectangle.
+    """Lay elements of items out in rectangle.
     Version 0 (skeleton code) just takes a slice off the canvas for
     each rectangle.  You will replace it with much better recursive
     layouts.
@@ -51,8 +51,7 @@ def layout(items: list[Real], rect: geometry.Rect):
         log.debug(f"Laying out {items} in {rect}")
         proportion = items[0] / sum(items)
         left_rect, rect = rect.split(proportion)
-        label = str(items[0])
-        display.draw_tile(left_rect, label)
+        display.draw_tile(left_rect, items[0])
         items = items[1:]
 
 

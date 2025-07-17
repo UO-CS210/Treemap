@@ -125,7 +125,10 @@ blue").   To this end, our tentative design is:
   from a CSV color scheme for Tk.
 - To the extent possible, color choice should be factored out of the 
   medium-specific modules `tk_display` and `svg_display` and 
-  localized in `display`.  This is likely to be imperfect. 
+  localized in `display`.  In this way, lookup happens only once, 
+  consistently.  (However, CSS specs override CSV color maps for the 
+  SVG display, so a color decision made in the `display` module may 
+  be ignored by the `svg_display` module.)
 
 ## Implementation constraints for an inheritance through inclusion
 
