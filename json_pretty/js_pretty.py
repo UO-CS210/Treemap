@@ -20,8 +20,12 @@ LONG = { "a": 12, "b": [1, 2, 3, 4],  "c": "sample", "d": [2, 4, 6, 8], "e": [19
 type Nest = (str | int | float | bool |
                 list[Nest] | tuple[Nest] | dict[str, Nest] )
 
-
 def width(nest: Nest) -> int:
+    """repr does the recursion for us."""
+    return len(repr(nest))
+
+
+def recwidth(nest: Nest) -> int:
     """Full length of printed version if on a single line"""
     # Base cases
     if isinstance(nest, (int | float | bool )):
@@ -55,6 +59,61 @@ def diagnose(nest: Nest):
     print()
 
 
+def compact(nest: Nest, indent=4, width=72) -> str:
+    """Produce a compact string representation of a nested structure
+    in JSON-compatible format.
+    """
+
+    def layout(nest: Nest, level=0):
+        """Recursively place portions of nest into lines buffer,
+        breaking into indented regions as needed.
+        """
+        indentation = " " * level * indent
+        if isinstance(nest, (int, float, bool, str)):  # Atomic types
+            lines.append(indentation + repr(nest))
+            return
+        # Also anything that can fit in one line
+        if len(repr(nest)) + len(indentation) <= width:
+            lines.append(indentation + repr(nest))
+            return
+
+        assert(isinstance(nest, (list, tuple, dict))), f"Can't convert {type(nest)} to json format"
+
+        # Lists and tuples are both represented in JSON as lists
+        if isinstance(nest, (list, tuple)):
+            # We already know the whole list or tuple is too long, so we'll break
+            # it into lines.  Initial version puts brackets on separate lines. FIXME.
+            lines.append(indentation + "[")
+            for el in nest:
+                layout(el, level + 1)
+            lines.append(indentation + "]")
+            return
+
+        if isinstance(nest, dict):
+            # Note breaking into tuples with ".items()" does NOT get what I want.
+            # FIXME:  find tactic for formatting dictionary entries
+            lines.append(indentation + "{")
+            for el in nest.items():
+                layout(el, level + 1)
+            lines.append(indentation + "}")
+            return
+
+        assert False, "Can't get here, this should be unreachable"
+
+    # Main body of compact
+    lines = []
+    layout(nest, level=0)
+    return "\n".join(lines)
+
+
+
+
+
+
+
+
+
+
 def main():
     diagnose("a")
     diagnose("string")
@@ -64,6 +123,17 @@ def main():
     diagnose(SHORT)
     diagnose(MED)
 
+    print(compact(TINY))
+    print(compact(BITTY))
+    print(compact(SHORT))
+    print(compact(MED))
+
+    print("Default width and indent")
+    print(compact(LONG))
+    print("Short lines")
+    print(compact(LONG, width=30))
+    print("Short lines and long indents")
+    print(compact(LONG, indent=8, width=30))
 
 if __name__ == "__main__":
     main()
