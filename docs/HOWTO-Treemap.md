@@ -1303,7 +1303,8 @@ Instead of using randomly generated colors, you can apply a
 style sheet to control colors in the SVG version: 
 
 ```commandline
- python3 treemap.py data/Howto-examples/majors-23F.json --css data/Howto-examples/UO-majors-colors.css 1024 768```
+python3 treemap.py data/Howto-examples/majors-23F.json --css data/Howto-examples/UO-majors-colors.css 1024 768
+```
 
 ![Declared majors in an intro CS course](img/majors-23F.png)
 
