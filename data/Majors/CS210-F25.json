@@ -1,0 +1,43 @@
+{
+   "CAS": {
+      "SCDS": {
+         "CS": 46,
+         "DSCI": 21,
+         "CYBR": 7,
+         "CIS": 1,
+         "MACS": 1
+      },
+      "SocSci": {
+         "EC": 7
+      },
+      "NatSci": {
+         "MATH": 5,
+         "PHYS": 5,
+         "pre-med": {
+            "BI": 4,
+            "NEUR": 2
+         },
+         "PSY": 3,
+         "CH": 1,
+         "ERTH": 1
+      }
+   },
+   "Business": {
+      "BADM": 5,
+      "PBA": 2
+   },
+   "EXPL": 4,
+   "Design": {
+      "ATCH": 2,
+      "ENVD": 1
+   },
+   "Ed": {
+      "CDS": 1
+   },
+   "SOJC": {
+      "JPR": 1
+   },
+   "SOMD": {
+      "MJS": 1
+   }
+}
