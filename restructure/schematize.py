@@ -21,7 +21,7 @@ log.setLevel(logging.INFO)
 
 def cli() -> object:
     """Command line interface"""
-    parser = argparse.ArgumentParser("Structure CSV data guided by json schema")
+    parser = argparse.ArgumentParser(description="Structure CSV data guided by json schema")
     parser.add_argument("--key",
                         help="Optional: Key values appear in column with this header",
                         nargs="?", default=None)
